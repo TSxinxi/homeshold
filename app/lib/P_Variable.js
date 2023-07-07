@@ -136,7 +136,7 @@ export function getLanguage() {
       orderError: 'Purchase failed',
       addressList: [
         {
-          "name": "state",
+          "name": "State",
           "value": ""
         },
         {

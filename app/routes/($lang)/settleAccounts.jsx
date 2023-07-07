@@ -194,7 +194,7 @@ export function Information({ product }) {
           </> : LText.type === 'EN' ? <>
             <div className='in_list'>
               <div className='in_list_title'>
-                <span>state <i>*</i></span>
+                <span>State <i>*</i></span>
                 <p></p>
               </div>
               <select name="state" nullmsg={LText.district} value={state} onChange={(e) => { setState(e.target.value) }} style={{ backgroundPosition: getDirection() === 'rtl' ? 'left .5rem center' : 'right .5rem center' }}>
