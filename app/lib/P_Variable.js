@@ -1258,8 +1258,8 @@ export function getLanguage() {
       ]
     },
     // 罗马尼亚
-    RO: {
-      type: 'RO',
+    RON: {
+      type: 'RON',
       country: 'Romania',
       deliveryProcess: 'deliveryProcess1.jpg',
       whatsAppText: 'Vă rugăm să faceți clic pe trimite direct, nu ștergeți linkul de mai jos, veți primi cele mai precise răspunsuri de la serviciul nostru pentru clienți',

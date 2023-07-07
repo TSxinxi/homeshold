@@ -126,7 +126,7 @@ export function OrderBox({ orderData }) {
           </div>
         </div>
         {
-          LText.type === 'RO' ? <button className='inline-block rounded font-medium text-center w-full bg-primary text-contrast' style={{ marginTop: '20px' }} onClick={() => { window.open('https://' + getShopAddress(), '_self') }}>
+          LText.type === 'RON' ? <button className='inline-block rounded font-medium text-center w-full bg-primary text-contrast' style={{ marginTop: '20px' }} onClick={() => { window.open('https://' + getShopAddress(), '_self') }}>
             <Text
               as="span"
               className="flex items-center justify-center gap-2 py-3 px-6"
