@@ -192,6 +192,42 @@ export function Information({ product }) {
               <input type="text" placeholder='ex: Strada, numar, bloc, scara, etaj, apartament' value={area} onChange={(e) => { setArea(e.target.value) }} />
             </div>
           </> : LText.type === 'EN' ? <>
+            <div className='in_list'>
+              <div className='in_list_title'>
+                <span>state <i>*</i></span>
+                <p></p>
+              </div>
+              <select name="state" nullmsg={LText.district} value={state} onChange={(e) => { setState(e.target.value) }} style={{ backgroundPosition: getDirection() === 'rtl' ? 'left .5rem center' : 'right .5rem center' }}>
+                {
+                  addressList.map((item, index) => {
+                    return (
+                      <option value={item.value} key={index}>{item.name}</option>
+                    )
+                  })
+                }
+              </select>
+            </div>
+            <div className='in_list'>
+              <div className='in_list_title'>
+                <span>{LText.city} <i>*</i></span>
+                <p></p>
+              </div>
+              <input type="text" placeholder={LText.city} value={city} onChange={(e) => { setCity(e.target.value) }} />
+            </div>
+            <div className='in_list'>
+              <div className='in_list_title'>
+                <span>{LText.postalCode} <i>*</i></span>
+                <p></p>
+              </div>
+              <input type="text" placeholder={LText.postalCode} value={postcode} onChange={(e) => { setPostcode(e.target.value) }} />
+            </div>
+            <div className='in_list'>
+              <div className='in_list_title'>
+                <span>{LText.address} <i>*</i></span>
+                <p></p>
+              </div>
+              <input type="text" placeholder={LText.address} value={area} onChange={(e) => { setArea(e.target.value) }} />
+            </div>
           </> : <>
             {
               province && province.length > 0 ? <div className='in_list'>
