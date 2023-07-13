@@ -1,7 +1,16 @@
 var canUseDOM = !!(typeof window !== "undefined" && typeof window.document !== "undefined" && typeof window.localStorage !== "undefined");
 var currencyCode = ''
-if (canUseDOM && localStorage.getItem('currencyCode')) {
-  currencyCode = localStorage.getItem('currencyCode')
+if (canUseDOM) {
+  let href = window.location.href
+  if (href && href.indexOf('-huf') > -1) {
+    currencyCode = 'HUF'
+  }
+  if (href && href.indexOf('-ron') > -1) {
+    currencyCode = 'RON'
+  }
+  if (localStorage.getItem('currencyCode')) {
+    currencyCode = localStorage.getItem('currencyCode')
+  }
 }
 
 export function getShopAddress() {
