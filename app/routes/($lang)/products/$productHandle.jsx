@@ -476,6 +476,9 @@ export default function Product() {
       if (href && href.indexOf('-huf') > -1) {
         currencyCode = 'HUF'
         localStorage.setItem('currencyCode', currencyCode)
+      } else if (href && href.indexOf('-ron') > -1) {
+        currencyCode = 'RON'
+        localStorage.setItem('currencyCode', currencyCode)
       } else {
         localStorage.removeItem('currencyCode')
       }

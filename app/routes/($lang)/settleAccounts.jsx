@@ -488,6 +488,9 @@ function SettleAccounts(product, params, setErrorText, setIsSubmit) {
     params.tags = LText.type
     params.area = params.area + ' ' + params.building
   }
+  if (LText.type === 'RON') {
+    params.tags = LText.type
+  }
   setIsSubmit(true)
 
   fetch.post(`${getDomain()}/account-service/media_orders/create/pass`, params).then(res => {
