@@ -49,7 +49,8 @@ export function getLanguage() {
   let language = {
     EN: {
       type: 'EN',
-      country: 'America',
+      tags: 'US',
+      country: 'United States',
       deliveryProcess: 'deliveryProcess4.jpg',
       whatsAppText: "Please click send directly, don't delete the link below, you will get the most accurate answers from our customer service",
       notFoundTit: 'I lost this page',
@@ -353,6 +354,7 @@ export function getLanguage() {
     // 中东
     SA: {
       type: 'SA',
+      tags: 'SA',
       country: 'Saudi Arabia',
       deliveryProcess: 'deliveryProcess2.png',
       whatsAppText: 'يرجى نقر الإرسال مباشرة، لا تحذف الرابط أدناه، ستحصل على  الإجابات الأكثر دقة من خدمة العملاء',
@@ -1268,7 +1270,8 @@ export function getLanguage() {
     },
     // 罗马尼亚
     RON: {
-      type: 'RON',
+      type: 'HUF',
+      tags: 'HUF',
       country: 'Romania',
       deliveryProcess: 'deliveryProcess1.jpg',
       whatsAppText: 'Vă rugăm să faceți clic pe trimite direct, nu ștergeți linkul de mai jos, veți primi cele mai precise răspunsuri de la serviciul nostru pentru clienți',
@@ -1541,6 +1544,7 @@ export function getLanguage() {
     // 匈牙利
     HUF: {
       type: "HUF",
+      tags: 'HUF',
       country: "Magyarország",
       deliveryProcess: 'deliveryProcess3.jpg',
       whatsAppText: 'Kérjük, kattintson közvetlenül a küldés gombra, ne törölje az alábbi linket, ügyfélszolgálatunktól a legpontosabb válaszokat kapja',

@@ -487,7 +487,7 @@ function SettleAccounts(product, params, setErrorText, setIsSubmit) {
   if (LText.type === 'HUF') {
     params.area = params.area + ' ' + params.building
   }
-  params.tags = LText.type
+  params.tags = LText.tags
   setIsSubmit(true)
 
   fetch.post(`${getDomain()}/account-service/media_orders/create/pass`, params).then(res => {
