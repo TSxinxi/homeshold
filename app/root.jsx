@@ -104,11 +104,14 @@ export default function App() {
         document.body.insertBefore(newScript, document.body.firstChild);
       })(window, document, "https://sdk.rum.aliyuncs.com/v1/bl.js", "__bl");
 
-      (function (c, l, a, r, i, t, y) {
-        c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments) };
-        t = l.createElement(r); t.async = 1; t.src = "https://www.clarity.ms/tag/" + i;
-        y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
-      })(window, document, "clarity", "script", "jkim08ftap");
+      (function () {
+        window.__insp = window.__insp || [];
+        __insp.push(['wid', 1331212353]);
+        var ldinsp = function () {
+          if (typeof window.__inspld != "undefined") return; window.__inspld = 1; var insp = document.createElement('script'); insp.type = 'text/javascript'; insp.async = true; insp.id = "inspsync"; insp.src = ('https:' == document.location.protocol ? 'https' : 'http') + '://cdn.inspectlet.com/inspectlet.js?wid=1331212353&r=' + Math.floor(new Date().getTime() / 3600000); var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(insp, x);
+        };
+        setTimeout(ldinsp, 0);
+      })();
       // (function (h, o, t, j, a, r) {
       //   h.hj = h.hj || function () { (h.hj.q = h.hj.q || []).push(arguments) };
       //   h._hjSettings = { hjid: 3527157, hjsv: 6 };
