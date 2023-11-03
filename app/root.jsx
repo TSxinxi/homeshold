@@ -85,33 +85,57 @@ export default function App() {
       localStorage.setItem('refererName', getReferer())
     }
     useEffect(() => {
-      (function (h, o, t, j, a, r) {
-        h.hj = h.hj || function () { (h.hj.q = h.hj.q || []).push(arguments) };
-        h._hjSettings = { hjid: 3527157, hjsv: 6 };
-        a = o.getElementsByTagName('head')[0];
-        r = o.createElement('script'); r.async = 1;
-        r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv;
-        a.appendChild(r);
-      })(window, document, 'https://static.hotjar.com/c/hotjar-', '.js?sv=');
-  
-      window.dataLayer = window.dataLayer || [];
-      function gtag() { dataLayer.push(arguments); }
-      gtag('js', new Date());
-      gtag('config', 'G-X12GDSEKQ1');
-
-      !function (f, b, e, v, n, t, s) {
-        if (f.fbq) return; n = f.fbq = function () {
-          n.callMethod ?
-            n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+      !(function (c, b, d, a) {
+        c[a] || (c[a] = {}); c[a].config =
+        {
+          pid: "gr6w69wpuh@db34193c9e236f8",
+          appType: "web",
+          imgUrl: "https://arms-retcode.aliyuncs.com/r.png?",
+          sendResource: true,
+          enableLinkTrace: true,
+          behavior: true,
+          enableSPA: true,
+          useFmp: true,
+          enableConsole: true
         };
-        if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
-        n.queue = []; t = b.createElement(e); t.async = !0;
-        t.src = v; s = b.getElementsByTagName(e)[0];
-        s.parentNode.insertBefore(t, s)
-      }(window, document, 'script',
-        'https://connect.facebook.net/en_US/fbevents.js');
-      fbq('init', '895173741588158');
-      fbq('track', 'PageView');
+        let newScript = document.createElement("script")
+        newScript.src = d
+        newScript.setAttribute("crossorigin", "")
+        document.body.insertBefore(newScript, document.body.firstChild);
+      })(window, document, "https://sdk.rum.aliyuncs.com/v1/bl.js", "__bl");
+
+      (function (c, l, a, r, i, t, y) {
+        c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments) };
+        t = l.createElement(r); t.async = 1; t.src = "https://www.clarity.ms/tag/" + i;
+        y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
+      })(window, document, "clarity", "script", "jkim08ftap");
+      // (function (h, o, t, j, a, r) {
+      //   h.hj = h.hj || function () { (h.hj.q = h.hj.q || []).push(arguments) };
+      //   h._hjSettings = { hjid: 3527157, hjsv: 6 };
+      //   a = o.getElementsByTagName('head')[0];
+      //   r = o.createElement('script'); r.async = 1;
+      //   r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv;
+      //   a.appendChild(r);
+      // })(window, document, 'https://static.hotjar.com/c/hotjar-', '.js?sv=');
+
+      // window.dataLayer = window.dataLayer || [];
+      // function gtag() { dataLayer.push(arguments); }
+      // gtag('js', new Date());
+      // gtag('config', 'G-X12GDSEKQ1');
+
+      // !function (f, b, e, v, n, t, s) {
+      //   if (f.fbq) return; n = f.fbq = function () {
+      //     n.callMethod ?
+      //       n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+      //   };
+      //   if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
+      //   n.queue = []; t = b.createElement(e); t.async = !0;
+      //   t.src = v; s = b.getElementsByTagName(e)[0];
+      //   s.parentNode.insertBefore(t, s)
+      // }(window, document, 'script',
+      //   'https://connect.facebook.net/en_US/fbevents.js');
+      // fbq('init', '895173741588158');
+      // fbq('track', 'PageView');
     }, []);
   }
   return (
