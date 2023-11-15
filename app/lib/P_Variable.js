@@ -21,8 +21,8 @@ export function getShopAddress() {
 }
 
 export function getDomain() {
-  return 'https://gateway.antdiy.vip';
-  // return 'https://gateway.di79.com';
+  // return 'https://gateway.antdiy.vip';
+  return 'https://gateway.di79.com';
 }
 
 export function openWhatsApp() {
