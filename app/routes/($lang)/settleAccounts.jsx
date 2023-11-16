@@ -489,12 +489,34 @@ function SettleAccounts(product, params, setErrorText, setIsSubmit) {
   }
   params.tags = LText.tags
   params.route = 2
+  let price = product?.price?.amount
+  params.product_list = [{
+    img_url: product?.image?.url,
+    title: product?.product?.title,
+    variantTitle: product?.title,
+    price: price,
+    product_id: setSplit(product.product_id),
+    quantity: 1,
+    variant_id: setSplit(product.id),
+  }]
   setIsSubmit(true)
 
-  fetch.post(`${getDomain()}/account-service/media_orders/create/pass`, params).then(res => {
+  // fetch.post(`${getDomain()}/account-service/media_orders/create/pass`, params).then(res => {
+  //   if (res && res.data) {
+  //     if (res.data.success && res.data.data && res.data.data.oid) {
+  //       window.open(`/thank_you?id=${res.data.data.oid}`, '_self')
+  //     } else {
+  //       setIsSubmit(false)
+  //       return setErrorText(res && res.data.msg || LText.orderError)
+  //     }
+  //   } else {
+  //     setIsSubmit(false)
+  //   }
+  // })
+  fetch.post(`${getDomain()}/account-service/media_orders/create/async/pass`, params).then(res => {
     if (res && res.data) {
-      if (res.data.success && res.data.data && res.data.data.oid) {
-        window.open(`/thank_you?id=${res.data.data.oid}`, '_self')
+      if (res.data.success && res.data?.data?.order?.id) {
+        window.open(`/thank_you?id=${res.data?.data?.order?.id}`, '_self')
       } else {
         setIsSubmit(false)
         return setErrorText(res && res.data.msg || LText.orderError)
