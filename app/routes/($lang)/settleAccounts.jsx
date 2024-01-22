@@ -4,29 +4,38 @@ import { Money } from '@shopify/hydrogen';
 import { Text } from '~/components';
 import fetch from '~/fetch/axios';
 import { getShopAddress, getLanguage, getDirection, getDomain } from '~/lib/P_Variable';
+import { add, subtract, multiply } from '~/lib/floatObj';
 const LText = getLanguage()
 const addressList = LText.addressList
+let productData = ''
 
 export default function settleAccounts() {
   const [hasMounted, setHasMounted] = useState(false);
+  const [selectedVar, setSelectVar] = useState('');
+  const [quantity, setQuantity] = useState(1);
   useEffect(() => {
     setHasMounted(true);
-  }, []);
-  if (!hasMounted) {
-    return null;
-  }
+    var canUseDOM = !!(typeof window !== "undefined" && typeof window.document !== "undefined" && typeof window.localStorage !== "undefined");
+    if (canUseDOM && window.localStorage.getItem('productVariant')) {
+      productData = JSON.parse(window.localStorage.getItem('productVariant'))
+      const firstVariant = productData.variants.nodes[0];
+      const selectedVariant = productData.selectedVariant ?? firstVariant
+      if (localStorage.getItem('currencyCode')) {
+        selectedVariant.price.currencyCode = localStorage.getItem('currencyCode')
+      }
+      setSelectVar(selectedVariant)
 
-
-  var canUseDOM = !!(typeof window !== "undefined" && typeof window.document !== "undefined" && typeof window.localStorage !== "undefined");
-  let product = '';
-  if (canUseDOM && window.localStorage.getItem('selectedVariant')) {
-    product = JSON.parse(window.localStorage.getItem('selectedVariant'))
-    product.product_id = new URLSearchParams(window.location.search).get('id');
-    if (!product.availableForSale) {
-      window.open(`/products/${product.product.handle}`, '_self')
+      // selectedVar = JSON.parse(window.localStorage.getItem('selectedVariant'))
+      // selectedVar.product_id = new URLSearchParams(window.location.search).get('id');
+      // if (!selectedVar.availableForSale) {
+      //   window.open(`/products/${selectedVar.product.handle}`, '_self')
+      // }
+    } else {
+      window.history.back()
     }
-  } else {
-    window.history.back()
+  }, []);
+  if (!hasMounted || !selectedVar) {
+    return null;
   }
 
   return (
@@ -38,29 +47,38 @@ export default function settleAccounts() {
           <i></i>
         </div>
       </div>
-      <ProductBox product={product} />
-      <Information product={product} />
-      <PaymentMethod />
+      <ProductBox selectedVar={selectedVar} quantity={quantity} />
+      <div className='order_content'>
+        <Variant selectedVar={selectedVar} setSelectVar={setSelectVar} quantity={quantity} setQuantity={setQuantity} />
+        <Information selectedVar={selectedVar} quantity={quantity} />
+        <PaymentMethod />
+      </div>
     </div>
   )
 }
 
-export function ProductBox({ product }) {
+export function ProductBox({ selectedVar, quantity }) {
+  const [isPreview, setIsPreview] = useState(false);
   return (
     <div className='product_box shadow_box' >
-      {product.image ? <img src={product.image.url} /> : null}
+      {
+        isPreview ? <div className='fixed_img' onClick={() => { setIsPreview(false) }}>
+          <img src={selectedVar.image.url} />
+        </div> : null
+      }
+      {selectedVar.image ? <div className='product_img'><img src={selectedVar.image.url} onClick={() => { setIsPreview(true) }} /></div> : null}
       <div className='product_title'>
-        <span>{product.product.title}</span>
-        <span>{product.title}</span>
+        <span>{selectedVar.product.title}</span>
+        <span>{selectedVar.title}</span>
         <Text
           as="span"
           className="flex items-center gap-2"
         >
           {/* {
-            product.compareAtPrice ? 
+            selectedVar.compareAtPrice ? 
             <Money
               withoutTrailingZeros
-              data={product.compareAtPrice}
+              data={selectedVar.compareAtPrice}
               as="span"
               className="opacity-50 strike"
             /> : null
@@ -68,18 +86,128 @@ export function ProductBox({ product }) {
           {/* <Money
             className='font_weight_b'
             withoutTrailingZeros
-            data={product.price}
+            data={selectedVar.price}
             as="span"
           /> */}
-          <span className='font_weight_b'>{product.price.currencyCode} {parseFloat(product?.price?.amount)}</span>
+          <span className='font_weight_b'>{selectedVar.price.currencyCode} {parseFloat(multiply(quantity, selectedVar?.price?.amount))}</span>
         </Text>
       </div>
     </div >
   );
 }
 
+export function Variant({ selectedVar, setSelectVar, quantity, setQuantity }) {
+  const [options, setOptions] = useState([]);
+  useEffect(() => {
+    let newoptions = productData.options.map(item => {
+      item.values = item.values.map(val => {
+        let obj = {
+          value: val,
+          active: false
+        }
+        selectedVar.selectedOptions.forEach(pop => {
+          if (pop.name === item.name && val === pop.value) {
+            obj.active = true
+          }
+        })
+        return obj
+      })
+      return item
+    })
+    setOptions(newoptions || [])
+  }, []);
 
-export function Information({ product }) {
+  return (
+    <div className='variant_box padding16'>
+      {options
+        .filter((option) => option.values.length > 1)
+        .map((option) => (
+          <div key={option.name} className='variant_li'>
+            <div className='title'>{option.name}</div>
+            {/* {option.values.length > 7 ? (
+              <select value={option.values.filter(i => i.active)[0].value} onChange={(e) => { changeVariant(setSelectVar, setOptions, options, e.target.value, option.name) }} >
+                {
+                  option.values.map((item, index) => {
+                    return (
+                      <option value={item.value} key={index}>{item.value}</option>
+                    )
+                  })
+                }
+              </select>
+            ) : ( */}
+            <div className='flex_center variant_li_sku'>{option.values.map((item, index) => {
+              return (
+                <div className={item.active ? 'active_sku bord_sku' : 'bord_sku'} key={index} onClick={() => { changeVariant(setSelectVar, setOptions, options, item.value, option.name) }}>{item.value}</div>
+              )
+            })}</div>
+            {/* )} */}
+          </div>
+        ))}
+      <div className='variant_li' key='quantity_li'>
+        <div className='title'>{LText.quantityText}</div>
+        <div className='quantity_li'>
+          <button onClick={() => { if (quantity > 1) setQuantity(subtract(quantity, 1)) }}>-</button>
+          <input type="text" value={quantity} onChange={(e) => {
+            const regex = /[^0-9]/g;
+            if (e.target.value > 10000) {
+              setQuantity(10000)
+            } else {
+              setQuantity(e.target.value.replace(regex, ''))
+            }
+          }} />
+          <button onClick={() => { setQuantity(add(quantity, 1)) }}>+</button>
+        </div>
+      </div>
+    </div >
+  );
+}
+function changeVariant(setSelectVar, setOptions, options, value, option) {
+  let copyOpt = [...options]
+  let variantsList = productData.variants.nodes || []
+  copyOpt.forEach(item => {
+    if (item.name === option) {
+      item.values.forEach(val => {
+        val.active = false
+        if (val.value === value) {
+          val.active = true
+        }
+      })
+    }
+  })
+
+  // let joinOpt = copyOpt.map(item => { return item.values.filter(i => i.active)[0].value }).join(' / ')
+  let filterOpt = copyOpt.map(item => {
+    return {
+      name: item.name,
+      value: item.values.filter(i => i.active)[0].value
+    }
+  })
+
+  if (variantsList && variantsList.length > 0) {
+    variantsList.forEach(varItem => {
+      varItem._list = [];
+      varItem.selectedOptions.forEach(item => {
+        const _item = filterOpt.find(i => i.value == item.value);
+        if (_item && _item.name == item.name) {
+          varItem._list.push(_item)
+        }
+      })
+      // if (item.title === joinOpt) {
+      //   setSelectVar(item)
+      // }
+    })
+    let selectOpt = variantsList.filter(i => i._list && i._list.length === filterOpt.length)[0]
+    if (selectOpt) {
+      if (localStorage.getItem('currencyCode')) {
+        selectOpt.price.currencyCode = localStorage.getItem('currencyCode')
+      }
+      setSelectVar(selectOpt)
+      setOptions(copyOpt)
+    }
+  }
+}
+
+export function Information({ selectedVar, quantity }) {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [whatsapp, setWhatsapp] = useState('');
@@ -88,10 +216,11 @@ export function Information({ product }) {
   const [area, setArea] = useState('');
   const [building, setBuilding] = useState('');
   const [street, setStreet] = useState('');
-  const [streetList, setStreetList] = useState([{ name: LText.type === 'HUF' ? 'Utca' : '', value: '' }]);
+  const [streetList, setStreetList] = useState([{ name: LText.type === 'HUF' ? 'Utca' : LText.type === 'CZK' ? 'Vyberte obec' : 'Vă rugăm să selectați Localitate', value: '' }]);
   const [nearest, setNearest] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
+  const [house_number, setHouseNumber] = useState('');
   const [errorText, setErrorText] = useState('');
   const [postcode, setPostcode] = useState('');
   const [isSubmit, setIsSubmit] = useState(false);
@@ -135,7 +264,10 @@ export function Information({ product }) {
           </div>
           {/* <div className='tele'>
             <span>+40</span> */}
-          <input type="text" placeholder={LText.telephone} value={phone} onChange={(e) => { setPhone(e.target.value) }} />
+          <input type="text" placeholder={LText.telephone} value={phone} onChange={(e) => {
+            const regex = /[^0-9]/g;
+            setPhone(e.target.value.replace(regex, ''))
+          }} />
           {/* </div> */}
         </div>
         {/* <div className='in_list'>
@@ -152,7 +284,8 @@ export function Information({ product }) {
                 <span>{LText.governor} <i>*</i></span>
                 <p></p>
               </div>
-              <select name="state" nullmsg={LText.district} value={state} onChange={(e) => { changeCity(e.target.value, setStreetList, setPostcode, setCity); setState(e.target.value) }} style={{ backgroundPosition: getDirection() === 'rtl' ? 'left .5rem center' : 'right .5rem center' }}>
+              <input type="text" placeholder={LText.governor} value={state} onChange={(e) => { setState(e.target.value) }} />
+              {/* <select name="state" nullmsg={LText.district} value={state} onChange={(e) => { changeCity(e.target.value, setStreetList, setPostcode, setCity); setState(e.target.value) }} style={{ backgroundPosition: getDirection() === 'rtl' ? 'left .5rem center' : 'right .5rem center' }}>
                 {
                   addressList.map((item, index) => {
                     return (
@@ -160,14 +293,15 @@ export function Information({ product }) {
                     )
                   })
                 }
-              </select>
+              </select> */}
             </div>
             <div className='in_list'>
               <div className='in_list_title'>
                 <span>{LText.city} <i>*</i></span>
                 <p></p>
               </div>
-              <select name="city" value={city} onChange={(e) => { changeArea(e.target.value, streetList, setPostcode); setCity(e.target.value) }} style={{ backgroundPosition: getDirection() === 'rtl' ? 'left .5rem center' : 'right .5rem center' }}>
+              <input type="text" placeholder={LText.city} value={city} onChange={(e) => { setCity(e.target.value) }} />
+              {/* <select name="city" value={city} onChange={(e) => { changeArea(e.target.value, streetList, setPostcode); setCity(e.target.value) }} style={{ backgroundPosition: getDirection() === 'rtl' ? 'left .5rem center' : 'right .5rem center' }}>
                 {
                   streetList.map((item, index) => {
                     return (
@@ -175,14 +309,7 @@ export function Information({ product }) {
                     )
                   })
                 }
-              </select>
-            </div>
-            <div className='in_list'>
-              <div className='in_list_title'>
-                <span>{LText.postalCode} <i>*</i></span>
-                <p></p>
-              </div>
-              <input disabled="disabled" type="text" placeholder={LText.postalCode} value={postcode} onChange={(e) => { setPostcode(e.target.value) }} />
+              </select> */}
             </div>
             <div className='in_list'>
               <div className='in_list_title'>
@@ -191,13 +318,33 @@ export function Information({ product }) {
               </div>
               <input type="text" placeholder='ex: Strada, numar, bloc, scara, etaj, apartament' value={area} onChange={(e) => { setArea(e.target.value) }} />
             </div>
-          </> : LText.type === 'EN' ? <>
             <div className='in_list'>
               <div className='in_list_title'>
-                <span>State <i>*</i></span>
+                <span>Numărul casei <i>*</i></span>
                 <p></p>
               </div>
-              <select name="state" nullmsg={LText.district} value={state} onChange={(e) => { setState(e.target.value) }} style={{ backgroundPosition: getDirection() === 'rtl' ? 'left .5rem center' : 'right .5rem center' }}>
+              <input type="text" placeholder='Numărul casei' value={house_number} onChange={(e) => { setHouseNumber(e.target.value) }} />
+            </div>
+            <div className='in_list'>
+              <div className='in_list_title'>
+                <span>{LText.postalCode} <i></i></span>
+                <p></p>
+              </div>
+              {/* <input disabled="disabled" type="text" placeholder={LText.postalCode} value={postcode} onChange={(e) => { setPostcode(e.target.value) }} /> */}
+              <input type="number" placeholder={LText.postalCode} value={postcode} onChange={(e) => {
+                if (e.target.value.length > 6) {
+                  setPostcode(e.target.value.slice(0, 6))
+                } else { setPostcode(e.target.value) }
+              }} />
+            </div>
+          </> : LText.type === 'CZK' ? <>
+            <div className='in_list'>
+              <div className='in_list_title'>
+                <span>{LText.governor} <i>*</i></span>
+                <p></p>
+              </div>
+              <input type="text" placeholder={LText.governor} value={state} onChange={(e) => { setState(e.target.value) }} />
+              {/* <select name="state" nullmsg={LText.district} value={state} onChange={(e) => { changeCity(e.target.value, setStreetList, setPostcode, setCity); setState(e.target.value) }} style={{ backgroundPosition: getDirection() === 'rtl' ? 'left .5rem center' : 'right .5rem center' }}>
                 {
                   addressList.map((item, index) => {
                     return (
@@ -205,7 +352,126 @@ export function Information({ product }) {
                     )
                   })
                 }
-              </select>
+              </select> */}
+            </div>
+            <div className='in_list'>
+              <div className='in_list_title'>
+                <span>{LText.city} <i>*</i></span>
+                <p></p>
+              </div>
+              <input type="text" placeholder={LText.city} value={city} onChange={(e) => { setCity(e.target.value) }} />
+              {/* <select name="city" value={city} onChange={(e) => { changeArea(e.target.value, streetList, setPostcode); setCity(e.target.value) }} style={{ backgroundPosition: getDirection() === 'rtl' ? 'left .5rem center' : 'right .5rem center' }}>
+                {
+                  streetList.map((item, index) => {
+                    return (
+                      <option value={item.value} key={index}>{item.name}</option>
+                    )
+                  })
+                }
+              </select> */}
+            </div>
+            <div className='in_list'>
+              <div className='in_list_title'>
+                <span>{LText.postalCode} <i>*</i></span>
+                <p></p>
+              </div>
+              {/* <input disabled="disabled" type="text" placeholder={LText.postalCode} value={postcode} onChange={(e) => { setPostcode(e.target.value) }} /> */}
+              <input type="number" placeholder={LText.postalCode} value={postcode} onChange={(e) => {
+                if (e.target.value.length > 5) {
+                  setPostcode(e.target.value.slice(0, 5))
+                } else { setPostcode(e.target.value) }
+              }} />
+            </div>
+            <div className='in_list'>
+              <div className='in_list_title'>
+                <span>{LText.address} <i>*</i></span>
+                <p></p>
+              </div>
+              <input type="text" placeholder='Ulice + číslo dveří: např. (Pod Pivovarem 265)' value={area} onChange={(e) => { setArea(e.target.value) }} />
+            </div>
+          </> : LText.type === 'HUF' ? <>
+            <div className='in_list'>
+              <div className='in_list_title'>
+                <span>Megye <i>*</i></span>
+                <p></p>
+              </div>
+              <input type="text" placeholder={LText.governor} value={state} onChange={(e) => { setState(e.target.value) }} />
+              {/* <select name="state" nullmsg={LText.district} value={state} onChange={(e) => { setState(e.target.value); setStreetList([{ name: 'Utca', value: '' }]); setCity(""); setPostcode(""); }} style={{ backgroundPosition: getDirection() === 'rtl' ? 'left .5rem center' : 'right .5rem center' }} >
+                {
+                  province.map((item, index) => {
+                    return (
+                      <option value={item.value} key={index}>{item.name}</option>
+                    )
+                  })
+                }
+              </select> */}
+            </div>
+            <div className='in_list'>
+              <div className='in_list_title'>
+                <span>Település/Kerület <i>*</i></span>
+                <p></p>
+              </div>
+              <input type="text" placeholder='Település/Kerület' value={city} onChange={(e) => { setCity(e.target.value) }} />
+              {/* changeCity(e.target.value, setStreetList, setPostcode, setArea);  */}
+              {/* <select name="city" nullmsg={LText.selectCity} value={city} onChange={(e) => { setCity(e.target.value) }} style={{ backgroundPosition: getDirection() === 'rtl' ? 'left .5rem center' : 'right .5rem center' }}>
+                {
+                  province.filter(i => i.value === state)[0].children.map((item, index) => {
+                    return (
+                      <option value={item.value} key={index}>{item.name}</option>
+                    )
+                  })
+                }
+              </select> */}
+            </div>
+            <div className='in_list'>
+              <div className='in_list_title'>
+                <span>{LText.address} <i>*</i></span>
+                <p></p>
+              </div>
+              {/* <select name="city" value={area} onChange={(e) => { changeArea(e.target.value, streetList, setPostcode); setArea(e.target.value) }} style={{ backgroundPosition: getDirection() === 'rtl' ? 'left .5rem center' : 'right .5rem center' }}>
+                {
+                  streetList.map((item, index) => {
+                    return (
+                      <option value={item.value} key={index}>{item.name}</option>
+                    )
+                  })
+                }
+              </select> */}
+              <input type="text" placeholder={LText.address} value={area} onChange={(e) => { setArea(e.target.value) }} />
+            </div>
+            <div className='in_list'>
+              <div className='in_list_title'>
+                <span>{LText.postalCode}</span>
+                <p></p>
+              </div>
+              {/* <input disabled="disabled" type="text" placeholder={LText.postalCode} value={postcode} onChange={(e) => { setPostcode(e.target.value) }} /> */}
+              <input type="number" placeholder={LText.postalCode} value={postcode} onChange={(e) => {
+                if (e.target.value.length > 4) {
+                  setPostcode(e.target.value.slice(0, 4))
+                } else { setPostcode(e.target.value) }
+              }} />
+            </div>
+            <div className='in_list'>
+              <div className='in_list_title'>
+                <span>házszám <i>*</i></span>
+                <p></p>
+              </div>
+              <input type="text" placeholder='Utca+házszám: Például (KBocskai utca 18)' value={building} onChange={(e) => { setBuilding(e.target.value) }} />
+            </div>
+          </> : LText.type === 'zł' ? <>
+            <div className='in_list'>
+              <div className='in_list_title'>
+                <span>{LText.address} <i>*</i></span>
+                <p></p>
+              </div>
+              <input type="text" placeholder={LText.addressPle} value={area} onChange={(e) => { setArea(e.target.value) }} />
+            </div>
+            <div className='in_list'>
+              <div className='in_list_title'>
+                <span>{LText.governor} <i>*</i></span>
+                <p></p>
+              </div>
+              <input type="text" placeholder={LText.governor} value={state} onChange={(e) => { setState(e.target.value) }} />
             </div>
             <div className='in_list'>
               <div className='in_list_title'>
@@ -216,79 +482,32 @@ export function Information({ product }) {
             </div>
             <div className='in_list'>
               <div className='in_list_title'>
-                <span>{LText.postalCode} <i>*</i></span>
+                <span>{LText.postalCode} <i></i></span>
                 <p></p>
               </div>
               <input type="text" placeholder={LText.postalCode} value={postcode} onChange={(e) => { setPostcode(e.target.value) }} />
             </div>
-            <div className='in_list'>
-              <div className='in_list_title'>
-                <span>{LText.address} <i>*</i></span>
-                <p></p>
-              </div>
-              <input type="text" placeholder={LText.address} value={area} onChange={(e) => { setArea(e.target.value) }} />
-            </div>
           </> : <>
-            {
-              province && province.length > 0 ? <div className='in_list'>
-                <div className='in_list_title'>
-                  <span>Megye <i>*</i></span>
-                  <p></p>
-                </div>
-                <select name="state" nullmsg={LText.district} value={state} onChange={(e) => { setState(e.target.value); setStreetList([{ name: 'Utca', value: '' }]); setCity(""); setPostcode(""); }} style={{ backgroundPosition: getDirection() === 'rtl' ? 'left .5rem center' : 'right .5rem center' }} >
-                  {
-                    province.map((item, index) => {
-                      return (
-                        <option value={item.value} key={index}>{item.name}</option>
-                      )
-                    })
-                  }
-                </select>
-              </div> : null
-            }
             <div className='in_list'>
               <div className='in_list_title'>
-                <span>Település/Kerület <i>*</i></span>
+                <span>{LText.zone} <i>*</i></span>
                 <p></p>
               </div>
-              <select name="city" nullmsg={LText.selectCity} value={city} onChange={(e) => { changeCity(e.target.value, setStreetList, setPostcode, setArea); setCity(e.target.value) }} style={{ backgroundPosition: getDirection() === 'rtl' ? 'left .5rem center' : 'right .5rem center' }}>
-                {
-                  province.filter(i => i.value === state)[0].children.map((item, index) => {
-                    return (
-                      <option value={item.value} key={index}>{item.name}</option>
-                    )
-                  })
-                }
-              </select>
+              <input type="text" placeholder={LText.zone} value={area} onChange={(e) => { setArea(e.target.value) }} />
             </div>
             <div className='in_list'>
               <div className='in_list_title'>
-                <span>{LText.address} <i>*</i></span>
+                <span>{LText.governor} <i>*</i></span>
                 <p></p>
               </div>
-              <select name="city" value={area} onChange={(e) => { changeArea(e.target.value, streetList, setPostcode); setArea(e.target.value) }} style={{ backgroundPosition: getDirection() === 'rtl' ? 'left .5rem center' : 'right .5rem center' }}>
-                {
-                  streetList.map((item, index) => {
-                    return (
-                      <option value={item.value} key={index}>{item.name}</option>
-                    )
-                  })
-                }
-              </select>
+              <input type="text" placeholder={LText.governor} value={state} onChange={(e) => { setState(e.target.value) }} />
             </div>
             <div className='in_list'>
               <div className='in_list_title'>
-                <span>{LText.postalCode} <i>*</i></span>
+                <span>{LText.city} <i>*</i></span>
                 <p></p>
               </div>
-              <input disabled="disabled" type="text" placeholder={LText.postalCode} value={postcode} onChange={(e) => { setPostcode(e.target.value) }} />
-            </div>
-            <div className='in_list'>
-              <div className='in_list_title'>
-                <span>házszám <i>*</i></span>
-                <p></p>
-              </div>
-              <input type="text" placeholder='Utca+házszám: Például (KBocskai utca 18)' value={building} onChange={(e) => { setBuilding(e.target.value) }} />
+              <input type="text" placeholder={LText.city} value={city} onChange={(e) => { setCity(e.target.value) }} />
             </div>
           </>
         }
@@ -299,88 +518,59 @@ export function Information({ product }) {
           </div>
           <input name="email" type="text" placeholder={LText.semail} value={email} onChange={(e) => { setEmail(e.target.value) }} />
         </div>
-        {/*
-        <div className='in_list'>
-          <div className='in_list_title'>
-            <span>{LText.building} <i>*</i></span>
-            <p></p>
-          </div>
-          <input type="text" placeholder={LText.buildingPle} value={building} onChange={(e) => { setBuilding(e.target.value) }} />
-        </div>
-        <div className='in_list'>
-          <div className='in_list_title'>
-            <span>{LText.street} <i>*</i></span>
-            <p></p>
-          </div>
-          <input type="text" placeholder={LText.streetPle} value={street} onChange={(e) => { setStreet(e.target.value) }} />
-        </div>
-        <div className='in_list'>
-          <div className='in_list_title'>
-            <span>{LText.closest} <i>*</i></span>
-            <p></p>
-          </div>
-          <input type="text" placeholder={LText.closestPle} value={nearest} onChange={(e) => { setNearest(e.target.value) }} />
-        </div>
-        <div className='in_list'>
-          <div className='in_list_title'>
-            <span>{LText.comments} <i>*</i></span>
-            <p></p>
-          </div>
-          <textarea type="text" placeholder='' value={message} onChange={(e) => { setMessage(e.target.value) }} />
-        </div> */}
       </div>
       <div className='settle_accounts_foot'>
         <div>
-          <Text
-            as="span"
-            className="flex items-center gap-2"
-            style={{ margin: '0 20px' }}
-          >
-            {/* <Money
-              className='font_weight_b'
-              withoutTrailingZeros
-              data={product.price}
-              as="span"
-            /> */}
-            <span className='font_weight_b'>{product.price.currencyCode} {parseFloat(product?.price?.amount)}</span>
-          </Text>
-          <div className='submit_btn'>
-            {
-              isSubmit ? <div className='loading_box'>
-                <img src="https://platform.antdiy.vip/static/image/hydrogen_loading.gif" />
-              </div> : null
-            }
-            <button className='inline-block rounded font-medium text-center w-full bg-primary text-contrast' onClick={() => {
-              SettleAccounts(
-                product,
-                {
-                  name: name,
-                  email: email,
-                  phone: phone,
-                  // whatsapp: whatsapp,
-                  country: LText.country,
-                  country_code: LText.type,
-                  state: state,
-                  city: city,
-                  area: area,
-                  postcode: postcode,
-                  building: building,
-                  // street: street,
-                  // nearest_land_mark: nearest,
-                  // message: message,
-                },
-                setErrorText,
-                setIsSubmit
-              )
-            }}>
-              <Text
-                as="span"
-                className="flex items-center justify-center gap-2 py-3 px-6 font_weight_b"
-              >
-                <span>{LText.apply}</span>
-              </Text>
-            </button>
-          </div>
+          {
+            selectedVar.availableForSale ? <div className='submit_btn'>
+              {
+                isSubmit ? <div className='loading_box'>
+                  <img src="https://platform.antdiy.vip/static/image/hydrogen_loading.gif" />
+                </div> : null
+              }
+              <button className='inline-block rounded font-medium text-center w-full bg-primary text-contrast paddingT5' onClick={() => {
+                SettleAccounts(
+                  quantity,
+                  selectedVar,
+                  {
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    // whatsapp: whatsapp,
+                    country: LText.country,
+                    country_code: LText.type == 'zł' ? 'PLN' : LText.type,
+                    state: state,
+                    city: city,
+                    area: area,
+                    postcode: postcode,
+                    building: building,
+                    house_number: house_number,
+                    // street: street,
+                    // nearest_land_mark: nearest,
+                    // message: message,
+                  },
+                  setErrorText,
+                  setIsSubmit
+                )
+              }}>
+                <Text
+                  as="span"
+                  className="flex items-center justify-center gap-2 py-3 px-6 font_weight_b buy_text"
+                >
+                  <span>{LText.apply}</span>
+                </Text>
+              </button>
+            </div> : <div className='submit_btn'>
+              <button className='inline-block rounded font-medium text-center w-full bg-primary paddingT5 out_of_btn'>
+                <Text
+                  as="span"
+                  className="flex items-center justify-center gap-2 py-3 px-6 font_weight_b buy_text"
+                >
+                  <span>{LText.sold}</span>
+                </Text>
+              </button>
+            </div>
+          }
         </div>
       </div>
       {errorText ? <div className='error_box'>
@@ -397,6 +587,12 @@ function changeArea(value, streetList, setPostcode) {
 }
 
 function changeCity(value, setStreetList, setPostcode, setArea) {
+  let default_name = LText.type === 'HUF' ? 'Utca' : LText.type === 'CZK' ? 'Vyberte obec' : 'Vă rugăm să selectați Localitate'
+  if (!value && LText.type !== 'HUF') {
+    setArea('')
+    setPostcode('')
+    setStreetList([{ name: default_name, value: '' }])
+  }
   fetch.get(`${getDomain()}/account-service/media_orders/pass/street?value=${value}`).then(res => {
     if (res && res.data && res.data.success && res.data[value]) {
       let list = JSON.parse(res.data[value])
@@ -409,6 +605,9 @@ function changeCity(value, setStreetList, setPostcode, setArea) {
         })
       }
       if (streetData && streetData.length > 0) {
+        if (LText.type !== 'HUF') {
+          streetData.unshift({ name: default_name, code: '', value: '' })
+        }
         setStreetList(streetData)
         setPostcode(streetData[0].code)
         setArea(streetData[0].value)
@@ -452,12 +651,21 @@ export function PaymentMethod() {
   )
 }
 
-function SettleAccounts(product, params, setErrorText, setIsSubmit) {
+function SettleAccounts(quantity, selectedVar, params, setErrorText, setIsSubmit) {
+  if (!quantity || quantity < 1) {
+    return setErrorText(LText.errorQuantity)
+  }
   if (!params.name || !params.phone || !params.state || !params.city || !params.area) {
     return setErrorText(LText.empty)
   }
   if (LText.type === 'HUF' && !params.building) {
     return setErrorText(LText.empty)
+  }
+  if (LText.type === 'RON' && !params.house_number) {
+    return setErrorText(LText.empty)
+  }
+  if (LText.type === 'RON' && params.phone.length < 10) {
+    return setErrorText(LText.validnum)
   }
   // var emailRegExp = /^[a-zA-Z0-9]+([-_.][A-Za-zd]+)*@([a-zA-Z0-9]+[-.])+[A-Za-zd]{2,5}$/;
   // if (!emailRegExp.test(params.email)) {
@@ -475,9 +683,9 @@ function SettleAccounts(product, params, setErrorText, setIsSubmit) {
   //   return setErrorText(LText.validnum)
   // }
   let line_items = [{
-    product_id: setSplit(product.product_id),
-    quantity: 1,
-    variant_id: setSplit(product.id),
+    product_id: setSplit(productData.id),
+    quantity: quantity,
+    variant_id: setSplit(selectedVar.id),
   }]
   let source_name = window.localStorage.getItem('sourceName')
   params.line_items = line_items
@@ -487,35 +695,41 @@ function SettleAccounts(product, params, setErrorText, setIsSubmit) {
   if (LText.type === 'HUF') {
     params.area = params.area + ' ' + params.building
   }
-  params.tags = LText.tags
+  params.tags = LText.type
   params.route = 2
-  let price = product?.price?.amount
+  let price = multiply(quantity, selectedVar?.price?.amount)
   params.product_list = [{
-    img_url: product?.image?.url,
-    title: product?.product?.title,
-    variantTitle: product?.title,
+    img_url: selectedVar?.image?.url,
+    title: selectedVar?.product?.title,
+    variantTitle: selectedVar?.title,
     price: price,
-    product_id: setSplit(product.product_id),
-    quantity: 1,
-    variant_id: setSplit(product.id),
+    product_id: setSplit(productData.id),
+    quantity: quantity,
+    variant_id: setSplit(selectedVar.id),
   }]
-  setIsSubmit(true)
 
-  // fetch.post(`${getDomain()}/account-service/media_orders/create/pass`, params).then(res => {
-  //   if (res && res.data) {
-  //     if (res.data.success && res.data.data && res.data.data.oid) {
-  //       window.open(`/thank_you?id=${res.data.data.oid}`, '_self')
-  //     } else {
-  //       setIsSubmit(false)
-  //       return setErrorText(res && res.data.msg || LText.orderError)
-  //     }
-  //   } else {
-  //     setIsSubmit(false)
-  //   }
-  // })
+  setIsSubmit(true)
   fetch.post(`${getDomain()}/account-service/media_orders/create/async/pass`, params).then(res => {
     if (res && res.data) {
       if (res.data.success && res.data?.data?.order?.id) {
+        let contents = line_items.map(item => {
+          return {
+            id: item.variant_id,
+            quantity: item.quantity,
+          }
+        })
+        sendFbq(
+          'Purchase',
+          {
+            content_type: 'product',
+            contents: contents,
+            value: price,
+            currency: selectedVar.price.currencyCode,
+          },
+          {
+            eventID: (new Date).getTime() + ""
+          }
+        )
         window.open(`/thank_you?id=${res.data?.data?.order?.id}`, '_self')
       } else {
         setIsSubmit(false)
@@ -533,5 +747,12 @@ function setSplit(data) {
     return arr[arr.length - 1]
   } else {
     return data
+  }
+}
+
+// FBQ
+function sendFbq(a, b, c) {
+  if ("function" == typeof window.fbq) {
+    window.fbq("track", a, b, c)
   }
 }

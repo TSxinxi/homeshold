@@ -9,12 +9,12 @@ export function NotFound({ type = 'page' }) {
   useEffect(() => {
     var canUseDOM = !!(typeof window !== "undefined" && typeof window.document !== "undefined" && typeof window.localStorage !== "undefined");
     if (canUseDOM) {
-      if (LText.type === 'EN') {
-        window.open('https://' + getShopAddress(), '_self')
-      } else {
+      // if (LText.type === 'EN') {
+      //   window.open('https://' + getShopAddress(), '_self')
+      // } else {
         setHeading(LText.notFoundTit)
         setDescription(LText.notFoundText)
-      }
+      // }
     }
   }, []);
 

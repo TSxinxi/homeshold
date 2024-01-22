@@ -61,7 +61,10 @@ class Thantyou extends React.Component {
       <div className='settle_accounts'>
         {
           productData ? <div className='product_box thank_product_box' >
-            <img src={productData?.img_url} />
+            <div className="product_img">
+              <img src={productData?.img_url} />
+              <div className="product_count">{productData?.quantity}</div>
+            </div>
             <div className='product_title'>
               <span>{productData?.title}</span>
               <span>{productData?.variantTitle}</span>

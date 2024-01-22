@@ -8,6 +8,12 @@ if (canUseDOM) {
   if (href && href.indexOf('-ron') > -1) {
     currencyCode = 'RON'
   }
+  if (href && href.indexOf('-czk') > -1) {
+    currencyCode = 'CZK'
+  }
+  if (href && href.indexOf('-pln') > -1) {
+    currencyCode = 'zł'
+  }
   if (localStorage.getItem('currencyCode')) {
     currencyCode = localStorage.getItem('currencyCode')
   }
@@ -48,314 +54,928 @@ export function getLanguage() {
   let LType = currencyCode || 'EN'
   let language = {
     EN: {
-      type: 'EN',
-      tags: 'US',
+      type: 'USD',
       country: 'United States',
+      country_code: 'USA',
       deliveryProcess: 'deliveryProcess4.jpg',
       whatsAppText: "Please click send directly, don't delete the link below, you will get the most accurate answers from our customer service",
-      notFoundTit: 'I lost this page',
-      notFoundText: 'Could not find the page you are looking for.',
-      buy: 'Buy with Cash on Delivery',
-      comTit: 'Customer reviews',
-      write: 'cancel rating',
-      sold: 'sold',
+      notFoundTit: 'We’ve lost this page',
+      notFoundText: 'We couldn’t find the page you’re looking for.',
+      buy: 'Buy now',
+      comTit: 'Customer Reviews',
+      write: 'Write a review',
+      sold: 'out of stock',
       addComment: 'Write a review',
-      rating: 'Rating grade',
+      rating: 'Rating',
       reviewTitle: 'Review Title',
-      reviewTiPle: 'Write a title for your review',
-      review: 'review',
-      reviewPle: 'Write your review here',
+      reviewTiPle: 'Give your review a title',
+      review: 'Review',
+      reviewPle: 'Write your comments here',
       error: 'This field is required.',
-      picture: 'photo/video (optional)',
-      selectName: 'Name (generically displayed as )',
-      namePle: '(enter name (public)',
-      emailN: 'email',
-      emailPle: 'Enter your email address (private)',
-      cancelRe: 'Cancel rating',
-      submitRe: 'Submit review',
-      screenCreate: 'newest first',
-      screenDesc: 'Top Rated',
-      screenAsc: 'lowest rated',
-      screenWith: 'Images only',
-      screenPic: 'Images first',
+      picture: 'Picture/Video (optional)',
+      selectName: 'Name (displayed publicly like ',
+      namePle: 'Enter your name (public)',
+      emailN: 'Email',
+      emailPle: 'Enter your email (private)',
+      cancelRe: 'Cancel review',
+      submitRe: 'Submit Review',
+      screenCreate: 'Most Recent',
+      screenDesc: 'Highest Rating',
+      screenAsc: 'Lowest Rating',
+      screenWith: 'Only Pictures',
+      screenPic: 'Pictures First',
       screenVideo: 'Videos First',
-      screenMost: 'Most Useful',
-      subReview: 'Review Submitted',
-      subComtent: 'Thank you! Please refresh the page in a few moments to see your review',
-
-      commentResult: 'No ratings yet',
-      based1: 'based on ',
-      based2: 'ratings',
-      seeAll: 'see all reviews',
-      image5: 'Sorry, we can only accept 5 images for a review.',
+      screenMost: 'Most Helpful',
+      subReview: 'Review Submitted!',
+      subComtent: 'Thank you! Please refresh the page in a few moments to see your review.',
+      commentResult: 'Be the first to write a review',
+      based1: 'Based on ',
+      based2: ' reviews',
+      seeAll: 'See All Assessments',
+      image5: 'Sorry, we can only accept five images for one review.',
       rightEmail: 'Please enter a valid email',
-      unknown: 'unknown',
-      acticleList: ['Payment Methods', 'Delivery', 'About Us', 'Terms and Conditions', 'Returns and Exchanges', 'Privacy Policy', 'Contact Us'],
-      discountZone: 'store discount zone',
-      free7: 'Free exchange and refund service within seven days',
-      deliver: 'Free delivery',
-      paying: 'Payment with cash on delivery',
-      orders: 'orders',
-      thank: 'thank you!',
+      unknown: 'Unknown',
+      acticleList: [' Payment Methods ', 'Delivery ', ' Information about Us ', 'Terms and Conditions ', ' Returns and Exchange ', 'Privacy Policy ', ' Contact Us '],
+      discountZone: 'Discount zone of store',
+      free7: 'Free 7 - day replacement and refund service',
+      deliver: "Delivery's free.",
+      paying: 'Paying Cash Upon Receipt',
+      orders: 'Orders',
+      thank: 'Oh, thank you.',
       request: 'Your request has been confirmed',
-      receive: 'You will soon receive a confirmation email containing your order number',
-      updateOrder: 'Update Order',
-      information: 'You will receive updated delivery and distribution information by email.',
-      customer: 'customer information',
-      contactInfo: 'contact info',
-      delivery: 'delivery address',
+      receive: 'You will soon receive a confirmed email with your order number',
+      updateOrder: 'Update order',
+      information: 'You will get updated shipping and distribution information by email.',
+      customer: 'Customer Information',
+      contactInfo: 'Contact info',
+      delivery: 'Delivery address',
       payment: 'Payment method',
-      payReceipt: 'Payment on receipt',
-      invoice: 'Invoice',
-      keeyshop: 'Continue Shopping',
-      confirRequest: 'Confirm request',
-      recipientInfo: 'Recipient Information',
-      yourName: 'Full name',
-      fullName: 'Full Name',
-      semail: 'Email',
-      governor: 'County',
+      payReceipt: 'Pay on Receipt',
+      invoice: 'Invoice address',
+      keeyshop: 'Keep Shopping',
+      confirRequest: 'Confirming Request',
+      recipientInfo: 'Recipient info',
+      yourName: 'Your name',
+      fullName: 'Full name',
+      semail: 'E-mail',
+      governor: 'Governorate',
       telephone: 'Telephone',
-
       district: 'Please select your district',
       city: 'City',
       selectCity: 'Please select your city',
-      zone: 'Region',
-      zonePle: 'Example: Olaya, Riyadh',
+      zone: 'region',
+      zonePle: 'Example: High Riyadh',
       building: 'Building',
-      buildingPle: 'example: villa 2 floor 3',
+      buildingPle: 'Example: Villa 2 Floor 3',
       street: 'Street',
       streetPle: 'Example: King Fahd Street',
-      closest: 'The closest landmark',
+      closest: 'Nearest landmark',
       closestPle: 'Example: Kingdom Tower',
-      phonepl1: 'mobile number: 5xxxxxxxx',
-      phonepl2: 'WhatsApp Number: 5xxxxxxxx',
+      phonepl1: 'Mobile phone number: 5xxxxxxxxxx',
+      phonepl2: 'WhatsApp number: 5xxxxxxx',
       comments: 'Message',
-      apply: 'Complete purchase',
-      method: 'Payment method',
-      recieving: 'Payment on receipt',
-      onlinePayment: 'Reduced transaction fee of 30 riyals for online payment.',
-      Website: 'Free delivery + Cash on delivery + Trusted website',
-      homepage: 'We strive to provide you with high quality products and excellent service, you will receive a notification when the product is delivered. If you have any questions, please click on the "whatsapp icon" on the home page',
-      empty: 'fields cannot be empty',
+      apply: 'Verify and apply',
+      method: 'payment method',
+      recieving: 'Paiement when recieving',
+      onlinePayment: 'Reducing the transaction fee of 30 riyals for online payment.',
+      Website: 'Free Shipping + Cash on Delivery + Trustworthy Website',
+      homepage: 'We strive to provide you with high quality products and excellent service, you will get a notification when the product is delivered. If you have any question, please click the whatsapp icon on the homepage',
+      empty: 'Fields cannot be empty',
       correct: 'Please enter the correct form',
       validnum: 'Enter a valid phone number',
-      noOpinion: 'No opinion',
-      writeReview: 'Write a review',
-      address: 'Address',
-      postalCode: 'Postal Code',
-      orderError: 'Purchase failed',
+      orderError: 'Failed purchase',
+      chooseMore: 'choose one more',
+      noSelect: 'Please select product specifications',
+      quantityText: 'quantity',
+      errorQuantity: 'Please enter product quantity',
       addressList: [
         {
-          "name": "State",
-          "value": ""
+          name: '(province) select',
+          value: '',
+          children: [
+            {
+              name: '（City）select',
+              value: '',
+            },
+          ],
         },
         {
-          "name": "Alabama",
-          "value": "Alabama"
+          name: 'Al-Baha',
+          value: 'Al Baha Province',
+          children: [
+            {
+              name: '（City）select',
+              value: '',
+            },
+            {
+              name: 'Adham',
+              value: 'Adham',
+            },
+            {
+              name: 'agate',
+              value: 'Al-Aqiq',
+            },
+            {
+              name: 'table',
+              value: 'Atawleh',
+            },
+            {
+              name: 'Al-Baha',
+              value: 'Albahah',
+            },
+            {
+              name: 'Baljurashi',
+              value: 'Baljurashi',
+            },
+            {
+              name: 'Qilwa',
+              value: 'Qilwah',
+            },
+            {
+              name: 'Almandaq',
+              value: 'Al Mandaq',
+            },
+            {
+              name: 'Makhwah',
+              value: 'Almakhwah',
+            },
+            {
+              name: 'Al Muzaylif',
+              value: 'Almuzaylif',
+            },
+          ],
         },
         {
-          "name": "Alaska",
-          "value": "Alaska"
+          name: 'Madinah',
+          value: 'Madinah Province',
+          children: [
+            {
+              name: '（City）select',
+              value: '',
+            },
+            {
+              name: 'Badr',
+              value: 'Badr',
+            },
+            {
+              name: 'Hanakia',
+              value: 'Al Henakiyah',
+            },
+            {
+              name: 'Khaybar',
+              value: 'Khaybar',
+            },
+            {
+              name: 'City',
+              value: 'Madinah',
+            },
+            {
+              name: 'cradle of gold',
+              value: 'Mahd adh Dhahab',
+            },
+            {
+              name: 'Al-Ula',
+              value: 'Al Ula',
+            },
+            {
+              name: 'Yanbu',
+              value: 'Yanbu',
+            },
+          ],
         },
         {
-          "name": "Arizona",
-          "value": "Arizona"
+          name: 'Riyadh',
+          value: 'Riyadh Province',
+          children: [
+            {
+              name: '（City）select',
+              value: '',
+            },
+            {
+              name: 'afif',
+              value: 'Afif',
+            },
+            {
+              name: 'Aflaj',
+              value: 'AlAflaj',
+            },
+            {
+              name: 'Al Ghat',
+              value: 'Al Ghat',
+            },
+            {
+              name: 'Muzahimiyah',
+              value: 'Al Muzahimiyah',
+            },
+            {
+              name: 'artawiyah',
+              value: 'Al Artawiyah',
+            },
+            {
+              name: 'Dawadmi',
+              value: 'Dawadmi',
+            },
+            {
+              name: 'Diriyah',
+              value: 'Ad Diriyah',
+            },
+            {
+              name: 'Dharma',
+              value: 'Dhurma',
+            },
+            {
+              name: 'Al Dilam',
+              value: 'AdDilam',
+            },
+            {
+              name: 'fire',
+              value: 'Al Hariq',
+            },
+            {
+              name: 'Hotat Bani Tamim',
+              value: 'Howtat Bani Tamim',
+            },
+            {
+              name: 'Huraymila',
+              value: 'Huraymila',
+            },
+            {
+              name: 'Hotat Sudair',
+              value: 'Hautat Sudair',
+            },
+            {
+              name: 'Jingle',
+              value: 'Jalajil',
+            },
+            {
+              name: 'output',
+              value: 'Kharj',
+            },
+            {
+              name: 'bundled',
+              value: 'Al Majmaah',
+            },
+            {
+              name: 'times',
+              value: 'Marat',
+            },
+            {
+              name: 'eyelet',
+              value: 'Al Uyaynah',
+            },
+            {
+              name: 'reed',
+              value: 'Al Qasab',
+            },
+            {
+              name: 'Quway',
+              value: 'Al Quwaiiyah',
+            },
+            {
+              name: 'Ramah',
+              value: 'Ruma',
+            },
+            {
+              name: 'Riyadh',
+              value: 'Riyadh',
+            },
+            {
+              name: 'Rawda Sudair',
+              value: 'Raudat Sudair',
+            },
+            {
+              name: 'Sajer',
+              value: 'Sajir',
+            },
+            {
+              name: 'Salboukh',
+              value: 'Salbukh',
+            },
+            {
+              name: 'blonde',
+              value: 'Shaqra',
+            },
+            {
+              name: 'descendent',
+              value: 'As Sulayyil',
+            },
+            {
+              name: 'Tadq',
+              value: 'Thadiq',
+            },
+            {
+              name: 'Tamir',
+              value: 'Tumair',
+            },
+            {
+              name: 'Wadi Al-Dawasir',
+              value: 'Wadi adDawasir',
+            },
+            {
+              name: 'Al Zulfi',
+              value: 'Az Zulfi',
+            },
+          ],
         },
         {
-          "name": "Arkansas",
-          "value": "Arkansas"
+          name: 'Eastern',
+          value: 'Eastern Province',
+          children: [
+            {
+              name: '（City）select',
+              value: '',
+            },
+            {
+              name: 'Abqaiq',
+              value: 'Buqayq',
+            },
+            {
+              name: 'Ain Dar',
+              value: 'New Ain Dar',
+            },
+            {
+              name: 'Al Ahsa',
+              value: 'Hassa',
+            },
+            {
+              name: 'about you',
+              value: 'Anak',
+            },
+            {
+              name: 'Batha',
+              value: 'Al Batha',
+            },
+            {
+              name: 'Dammam',
+              value: 'Dammam',
+            },
+            {
+              name: 'Dhahran',
+              value: 'Dahran',
+            },
+            {
+              name: 'Hafar Al-Batin',
+              value: 'Hafar Al Batin',
+            },
+            {
+              name: 'harad',
+              value: 'Haradh',
+            },
+            {
+              name: 'Hawiyah',
+              value: 'Hawiya',
+            },
+            {
+              name: 'Al Hofuf',
+              value: 'Hofuf',
+            },
+            {
+              name: 'Jubail',
+              value: 'Jubail',
+            },
+            {
+              name: 'Al-Khafji',
+              value: 'Khafji',
+            },
+            {
+              name: 'news',
+              value: 'Khobar',
+            },
+            {
+              name: 'Mubaraz',
+              value: 'Al Mubarraz',
+            },
+            {
+              name: 'Miliga',
+              value: 'Mulayjah',
+            },
+            {
+              name: 'Nairyah',
+              value: 'Nairyah',
+            },
+            {
+              name: 'Ottoman',
+              value: 'Uthmaniyah',
+            },
+            {
+              name: 'continent',
+              value: 'Al Qarah',
+            },
+            {
+              name: 'Upper Village',
+              value: 'Qaryat Al Ulya',
+            },
+            {
+              name: 'Qatif',
+              value: 'Qatif',
+            },
+            {
+              name: 'Qaisumah',
+              value: 'Al Qaisumah',
+            },
+            {
+              name: 'Ras Al-Khair',
+              value: 'Ras Al Khair',
+            },
+            {
+              name: 'Ras Tanura',
+              value: 'Ras Tanura',
+            },
+            {
+              name: 'Safaniya',
+              value: 'As Saffaniyah',
+            },
+            {
+              name: 'Safwa',
+              value: 'Safwa',
+            },
+            {
+              name: 'Salwa',
+              value: 'Salwa',
+            },
+            {
+              name: 'Assarar',
+              value: 'As Sarrar',
+            },
+            {
+              name: 'Sayhat',
+              value: 'Saihat',
+            },
+            {
+              name: 'Tarot',
+              value: 'Tarout',
+            },
+            {
+              name: 'Udhailiyah',
+              value: 'Udhailiyah',
+            },
+            {
+              name: 'eyes',
+              value: 'Al Uyun',
+            },
+          ],
         },
         {
-          "name": "California",
-          "value": "California"
+          name: 'Hail',
+          value: 'Hail Province',
+          children: [
+            {
+              name: '（City）select',
+              value: '',
+            },
+            {
+              name: 'wall',
+              value: 'Al Hait',
+            },
+            {
+              name: 'shamli',
+              value: 'Ash Shamli',
+            },
+            {
+              name: 'spot',
+              value: 'Baqaa',
+            },
+            {
+              name: 'Hail',
+              value: 'Hail',
+            },
+          ],
         },
         {
-          "name": "Colorado",
-          "value": "Colorado"
+          name: 'Makkah',
+          value: 'Makkah Province',
+          children: [
+            {
+              name: '（City）select',
+              value: '',
+            },
+            {
+              name: 'Alhada',
+              value: 'Alhada',
+            },
+            {
+              name: 'depth',
+              value: 'amaq',
+            },
+            {
+              name: 'Asfan',
+              value: 'Asfan',
+            },
+            {
+              name: 'Bahra',
+              value: 'Bahrah',
+            },
+            {
+              name: 'Ponds',
+              value: 'Al Birk',
+            },
+            {
+              name: 'Dhaban',
+              value: 'Dahban',
+            },
+            {
+              name: 'scarab',
+              value: "Al Ju'ranah",
+            },
+            {
+              name: 'Jeddah',
+              value: 'Jeddah',
+            },
+            {
+              name: 'Jumum',
+              value: 'Al Jumum',
+            },
+            {
+              name: 'Khalis',
+              value: 'Khulais',
+            },
+            {
+              name: 'The Khurma',
+              value: 'Al Khurma',
+            },
+            {
+              name: 'allith',
+              value: 'Al Lith',
+            },
+            {
+              name: 'Makkah',
+              value: 'Makkah',
+            },
+            {
+              name: 'Mastoura',
+              value: 'Mastorah',
+            },
+            {
+              name: 'Nimran',
+              value: 'Nimran',
+            },
+            {
+              name: 'Al Qunfudhah',
+              value: 'Al Qunfudhah',
+            },
+            {
+              name: 'Rabigh',
+              value: 'Rabigh',
+            },
+            {
+              name: 'ranya',
+              value: 'Raniah',
+            },
+            {
+              name: 'Taif',
+              value: 'Taif',
+            },
+            {
+              name: 'thul',
+              value: 'Thuwal',
+            },
+            {
+              name: 'soil',
+              value: 'Turbah',
+            },
+            {
+              name: 'Nuwariya',
+              value: 'An Nawwariyyah',
+            },
+          ],
         },
         {
-          "name": "Connecticut",
-          "value": "Connecticut"
+          name: 'Qassim',
+          value: 'Al Qassim Province',
+          children: [
+            {
+              name: '（City）select',
+              value: '',
+            },
+            {
+              name: 'Dulaimi',
+              value: 'Al Dulaymiyah',
+            },
+            {
+              name: 'Al-Rass',
+              value: 'Ar Rass',
+            },
+            {
+              name: 'Ain Ibn Fuhaid',
+              value: 'Ayn Ibn Fuhayd',
+            },
+            {
+              name: 'Badi',
+              value: 'Al Badaya',
+            },
+            {
+              name: 'Bukayriyah',
+              value: 'Al Bukayriyah',
+            },
+            {
+              name: 'Buraydah',
+              value: 'Buraydah',
+            },
+            {
+              name: 'Dhariya',
+              value: 'Dariyah',
+            },
+            {
+              name: 'guilty',
+              value: 'Al Mithnab',
+            },
+            {
+              name: 'Unayzah',
+              value: 'Unayzah',
+            },
+            {
+              name: 'Riyad Al-Khubra',
+              value: 'Riyadh Al Khabra',
+            },
+            {
+              name: 'Tannomah',
+              value: 'Tanumah',
+            },
+            {
+              name: 'Uqlat Al-Suqur',
+              value: 'Uglat Asugour',
+            },
+          ],
         },
         {
-          "name": "Delaware",
-          "value": "Delaware"
+          name: 'The Hollow',
+          value: 'Al Jouf Province',
+          children: [
+            {
+              name: '（City）select',
+              value: '',
+            },
+            {
+              name: 'Abu Ajram',
+              value: 'Abu Ajram',
+            },
+            {
+              name: 'The Hollow',
+              value: 'Al Jouf',
+            },
+            {
+              name: 'Dumat al-Jandal',
+              value: 'Dumah Al Jandal',
+            },
+            {
+              name: 'modern',
+              value: 'Al Hadithah',
+            },
+            {
+              name: "Amar's case",
+              value: 'Halat Ammar',
+            },
+            {
+              name: 'Qurayyat',
+              value: 'Al Qurayyat',
+            },
+            {
+              name: 'Sakaka',
+              value: 'Sakaka',
+            },
+            {
+              name: 'Tabarjal',
+              value: 'Tabarjal',
+            },
+          ],
         },
         {
-          "name": "Florida",
-          "value": "Florida"
+          name: 'Asir',
+          value: 'Asir Province',
+          children: [
+            {
+              name: '（City）select',
+              value: '',
+            },
+            {
+              name: 'Abha',
+              value: 'Abha',
+            },
+            {
+              name: 'Ahad Rufaida',
+              value: 'Ahad Rafidah',
+            },
+            {
+              name: 'Bilsamar',
+              value: 'Billasmar',
+            },
+            {
+              name: 'Bariq',
+              value: 'Bariq',
+            },
+            {
+              name: 'Bishah',
+              value: 'Bisha',
+            },
+            {
+              name: 'Dhahran al-Janoub',
+              value: 'Dahran Al Janub',
+            },
+            {
+              name: 'critical',
+              value: 'Harajah',
+            },
+            {
+              name: 'Khamis Mushait',
+              value: 'Khamis Mushait',
+            },
+            {
+              name: 'Almajardah',
+              value: 'Almajaridah',
+            },
+            {
+              name: 'Muhayil Aseer',
+              value: 'Muhayil',
+            },
+            {
+              name: 'Al-Namas',
+              value: 'Al Namas',
+            },
+            {
+              name: 'Brightest Men',
+              value: 'Ragal Almaa',
+            },
+            {
+              name: 'Sabbath of the High',
+              value: 'Sabt Al Alayah',
+            },
+            {
+              name: 'Sarat Obeida',
+              value: 'Sarat Abidah',
+            },
+            {
+              name: 'Tanuma',
+              value: 'Tanomah',
+            },
+            {
+              name: 'triangulate',
+              value: 'Tathleeth',
+            },
+            {
+              name: 'The Two Valleys',
+              value: 'Al-Wadeen',
+            },
+            {
+              name: 'Wadi Ibn Hashbel',
+              value: 'Wadi Ibn Hashbal',
+            },
+          ],
         },
         {
-          "name": "Georgia",
-          "value": "Georgia"
+          name: 'Jazan',
+          value: 'Jizan Province',
+          children: [
+            {
+              name: '（City）select',
+              value: '',
+            },
+            {
+              name: 'Abu Arish',
+              value: 'Abu Arish',
+            },
+            {
+              name: 'Aldayer',
+              value: 'Addayer',
+            },
+            {
+              name: 'Sun Theater',
+              value: 'Ahad Al Masarihah',
+            },
+            {
+              name: 'Keel',
+              value: 'Al-Aridah',
+            },
+            {
+              name: 'bish',
+              value: 'Baish',
+            },
+            {
+              name: 'ligature',
+              value: 'Damad',
+            },
+            {
+              name: 'The Trail',
+              value: 'Ad Darb',
+            },
+            {
+              name: 'Knights',
+              value: 'Farasan',
+            },
+            {
+              name: 'Jazan',
+              value: 'Jizan',
+            },
+            {
+              name: 'corpus',
+              value: 'Al Karbus',
+            },
+            {
+              name: 'boy',
+              value: 'Sabya',
+            },
+            {
+              name: 'Samta',
+              value: 'Samtah',
+            },
+          ],
         },
         {
-          "name": "Hawaii",
-          "value": "Hawaii"
+          name: 'Najran',
+          value: 'Najran Province',
+          children: [
+            {
+              name: '（City）select',
+              value: '',
+            },
+            {
+              name: 'Najran',
+              value: 'Najran',
+            },
+            {
+              name: 'sharurah',
+              value: 'Sharorah',
+            },
+            {
+              name: 'Love Us',
+              value: 'Hubuna',
+            },
+            {
+              name: 'Thar',
+              value: 'Thar',
+            },
+            {
+              name: 'Yedma',
+              value: 'Yadamah',
+            },
+          ],
         },
         {
-          "name": "Idaho",
-          "value": "Idaho"
+          name: 'Northern Border',
+          value: 'Northern Border Province',
+          children: [
+            {
+              name: '（City）select',
+              value: '',
+            },
+            {
+              name: 'arar',
+              value: 'Arar',
+            },
+            {
+              name: 'Rafha',
+              value: 'Rafah',
+            },
+            {
+              name: 'Tarif',
+              value: 'Turaif',
+            },
+          ],
         },
         {
-          "name": "Illinois",
-          "value": "Illinois"
+          name: 'Tabuk',
+          value: 'Tabuk Province',
+          children: [
+            {
+              name: '（City）select',
+              value: '',
+            },
+            {
+              name: 'Al-Bida',
+              value: 'Al Bad',
+            },
+            {
+              name: 'Daba',
+              value: 'Duba',
+            },
+            {
+              name: 'field',
+              value: 'Haql',
+            },
+            {
+              name: 'Tabuk',
+              value: 'Tabuk',
+            },
+            {
+              name: 'Taima',
+              value: 'Tayma',
+            },
+            {
+              name: 'trowel',
+              value: 'Umluj',
+            },
+            {
+              name: 'face',
+              value: 'Al-Wajh',
+            },
+          ],
         },
-        {
-          "name": "Indiana",
-          "value": "Indiana"
-        },
-        {
-          "name": "Iowa",
-          "value": "Iowa"
-        },
-        {
-          "name": "Kansas",
-          "value": "Kansas"
-        },
-        {
-          "name": "Kentucky",
-          "value": "Kentucky"
-        },
-        {
-          "name": "Lousiana",
-          "value": "Lousiana"
-        },
-        {
-          "name": "Maine",
-          "value": "Maine"
-        },
-        {
-          "name": "Maryland",
-          "value": "Maryland"
-        },
-        {
-          "name": "Massachusetts",
-          "value": "Massachusetts"
-        },
-        {
-          "name": "Michigan",
-          "value": "Michigan"
-        },
-        {
-          "name": "Minnesota",
-          "value": "Minnesota"
-        },
-        {
-          "name": "Mississippi",
-          "value": "Mississippi"
-        },
-        {
-          "name": "Missouri",
-          "value": "Missouri"
-        },
-        {
-          "name": "Montana",
-          "value": "Montana"
-        },
-        {
-          "name": "Nebraska",
-          "value": "Nebraska"
-        },
-        {
-          "name": "Nevada",
-          "value": "Nevada"
-        },
-        {
-          "name": "New Hampshire",
-          "value": "New Hampshire"
-        },
-        {
-          "name": "New Jersey",
-          "value": "New Jersey"
-        },
-        {
-          "name": "New Mexico",
-          "value": "New Mexico"
-        },
-        {
-          "name": "New York",
-          "value": "New York"
-        },
-        {
-          "name": "North Carolina",
-          "value": "North Carolina"
-        },
-        {
-          "name": "North Dakota",
-          "value": "North Dakota"
-        },
-        {
-          "name": "Ohio",
-          "value": "Ohio"
-        },
-        {
-          "name": "Oklahoma",
-          "value": "Oklahoma"
-        },
-        {
-          "name": "Oregon",
-          "value": "Oregon"
-        },
-        {
-          "name": "Pennsylvania",
-          "value": "Pennsylvania"
-        },
-        {
-          "name": "Rhode Island",
-          "value": "Rhode Island"
-        },
-        {
-          "name": "South Carolina",
-          "value": "South Carolina"
-        },
-        {
-          "name": "South Dakota",
-          "value": "South Dakota"
-        },
-        {
-          "name": "Tennessee",
-          "value": "Tennessee"
-        },
-        {
-          "name": "Texas",
-          "value": "Texas"
-        },
-        {
-          "name": "Utah",
-          "value": "Utah"
-        },
-        {
-          "name": "Vermont",
-          "value": "Vermont"
-        },
-        {
-          "name": "Virginia",
-          "value": "Virginia"
-        },
-        {
-          "name": "Washington",
-          "value": "Washington"
-        },
-        {
-          "name": "West Virginia",
-          "value": "West Virginia"
-        },
-        {
-          "name": "Wisconsin",
-          "value": "Wisconsin"
-        },
-        {
-          "name": "Wyoming",
-          "value": "Wyoming"
-        }
       ]
     },
     // 中东
     SA: {
       type: 'SA',
-      tags: 'SA',
       country: 'Saudi Arabia',
+      country_code: 'SAU',
       deliveryProcess: 'deliveryProcess2.png',
       whatsAppText: 'يرجى نقر الإرسال مباشرة، لا تحذف الرابط أدناه، ستحصل على  الإجابات الأكثر دقة من خدمة العملاء',
       notFoundTit: 'لقد فقدنا هذه الصفحة',
@@ -363,7 +983,7 @@ export function getLanguage() {
       buy: 'اشتر الآن',
       comTit: 'تقييمات العملاء',
       write: 'إلغاء التقييم',
-      sold: 'تم البيع',
+      sold: 'إنتهى من المخزن',
       addComment: 'اكتب مراجعة',
       rating: 'علامة التقييم',
       reviewTitle: 'عنوان التقييم',
@@ -445,6 +1065,10 @@ export function getLanguage() {
       correct: 'الرجاء إدخال النموذج الصحيح',
       validnum: 'أدخل رقم هاتف صالح',
       orderError: 'الشراء الفاشل',
+      chooseMore: 'اختر واحدًا آخر',
+      noSelect: 'الرجاء تحديد مواصفات المنتج',
+      quantityText: 'كمية',
+      errorQuantity: 'الرجاء إدخال كمية المنتج',
       addressList: [
         {
           name: '（المحافظة）إختر',
@@ -1270,9 +1894,9 @@ export function getLanguage() {
     },
     // 罗马尼亚
     RON: {
-      type: 'HUF',
-      tags: 'HUF',
+      type: 'RON',
       country: 'Romania',
+      country_code: 'ROU',
       deliveryProcess: 'deliveryProcess1.jpg',
       whatsAppText: 'Vă rugăm să faceți clic pe trimite direct, nu ștergeți linkul de mai jos, veți primi cele mai precise răspunsuri de la serviciul nostru pentru clienți',
       notFoundTit: 'Am pierdut această pagină',
@@ -1280,7 +1904,7 @@ export function getLanguage() {
       buy: 'Cumpărați cu Ramburs la Livrare',
       comTit: 'Opinii clienți',
       write: 'anulează evaluarea',
-      sold: 'vândut',
+      sold: 'epuizat',
       addComment: 'Scrieți o recenzie',
       rating: 'Notă de evaluare',
       reviewTitle: 'Titlul recenziei',
@@ -1339,7 +1963,7 @@ export function getLanguage() {
       telephone: 'Telefon',
 
       district: 'Vă rugăm să selectați districtul dvs.',
-      city: 'Localitate',
+      city: 'Oraș',
       selectCity: 'Vă rugăm să vă selectați orașul',
       zone: 'Regiune',
       zonePle: 'Exemplu: Olaya, Riyadh',
@@ -1363,12 +1987,18 @@ export function getLanguage() {
       validnum: 'Introduceți un număr de telefon valid',
       noOpinion: 'Nici o părere',
       writeReview: 'Scrieți o recenzie',
-      address: 'Adresă',
+      address: 'Adresa exacta',
       postalCode: 'Cod postal',
       orderError: 'Achiziție eșuată',
+      chooseMore: 'mai alege unul',
+      noSelect: 'Vă rugăm să selectați specificațiile produsului',
+      policyList: ['Certificare UE', 'Plata la livrare', 'Retur în 30 de zile', 'Transport gratuit'],
+      divisionText: 'Detalii',
+      quantityText: 'cantitate',
+      errorQuantity: 'Vă rugăm să introduceți cantitatea produsului',
       addressList: [
         {
-          "name": "Județ",
+          "name": "Vă rugăm să selectați Județ",
           "value": ""
         },
         {
@@ -1544,8 +2174,8 @@ export function getLanguage() {
     // 匈牙利
     HUF: {
       type: "HUF",
-      tags: 'HUF',
       country: "Magyarország",
+      country_code: 'HUN',
       deliveryProcess: 'deliveryProcess3.jpg',
       whatsAppText: 'Kérjük, kattintson közvetlenül a küldés gombra, ne törölje az alábbi linket, ügyfélszolgálatunktól a legpontosabb válaszokat kapja',
       notFoundTit: 'Ezt az oldalt elvesztettük',
@@ -1553,7 +2183,7 @@ export function getLanguage() {
       buy: "Vásárlás utánvéttel",
       comTit: "Vásárlói vélemények",
       write: 'minősítés törlése',
-      sold: 'eladva',
+      sold: 'nincs raktáron',
       addComment: "Írjon véleményt",
       rating: 'Értékelési fokozat',
       reviewTitle: 'Review Title',
@@ -1639,6 +2269,12 @@ export function getLanguage() {
       address: "Utca",
       postalCode: 'Irányítószám',
       orderError: 'Sikertelen vásárlás',
+      chooseMore: 'válassz még egyet',
+      noSelect: 'Kérjük, válassza ki a termék specifikációit',
+      policyList: ['EU minősítés', 'Fizetés kézbesítéskor', '30 napon belül visszaküldeni', 'Ingyenes szállítás'],
+      divisionText: 'Részletek',
+      quantityText: 'Mennyiség',
+      errorQuantity: 'Kérjük, adja meg a termék mennyiségét',
       addressList: {
         "Megye": "",
         "Bács-Kiskun": {
@@ -4851,7 +5487,280 @@ export function getLanguage() {
           "Zebecke": {}
         }
       },
-    }
+    },
+    // 捷克
+    CZK: {
+      type: 'CZK',
+      country: 'Czech Republic',
+      country_code: 'CZK',
+      deliveryProcess: 'deliveryProcess5.png',
+      whatsAppText: 'Klikněte prosím odeslat přímo, nemažte odkaz níže, nejpřesnější odpovědi získáte od našeho zákaznického servisu',
+      notFoundTit: 'Ztratil jsem tuto stránku',
+      notFoundText: 'Nelze najít stránku, kterou hledáte.',
+      buy: 'Koupit na dobírku',
+      comTit: 'Zákaznické recenze',
+      write: 'zrušit hodnocení',
+      sold: 'vyprodáno',
+      addComment: 'Napsat recenzi',
+      rating: 'Hodnocení',
+      reviewTitle: 'Název recenze',
+      reviewTiPle: 'Napište název pro vaši recenzi',
+      review: 'recenze',
+      reviewPle: 'Sem napište svou recenzi',
+      error: 'Toto pole je povinné.',
+      picture: 'fotka/video (volitelné)',
+      selectName: 'Název (obecně zobrazen jako )',
+      namePle: '(zadejte jméno (veřejné)',
+      emailN: 'e-mail',
+      emailPle: 'Zadejte svou e-mailovou adresu (soukromou)',
+      cancelRe: 'Zrušit hodnocení',
+      submitRe: 'Odeslat recenzi',
+      screenCreate: 'nejnovější první',
+      screenDesc: 'Nejlépe hodnocené',
+      screenAsc: 'nejnižší hodnocení',
+      screenWith: 'Pouze obrázky',
+      screenPic: 'Obrázky jako první',
+      screenVideo: 'Videos First',
+      screenMost: 'Nejužitečnější',
+      subReview: 'Recenze odeslána',
+      subComtent: 'Děkuji! Chcete-li zobrazit svou recenzi, za chvíli stránku obnovte',
+
+      commentResult: 'Zatím bez hodnocení',
+      based1: 'based on ',
+      based2: 'hodnocení',
+      seeAll: 'zobrazit všechny recenze',
+      image5: 'Je nám líto, ke kontrole můžeme přijmout pouze 5 obrázků.',
+      rightEmail: 'Zadejte prosím platný e-mail',
+      unknown: 'neznámý',
+      acticleList: ['Platební metody', 'Doručení', 'O nás', 'Smluvní podmínky', 'Vrácení a výměna', 'Zásady ochrany osobních údajů', 'Kontaktujte nás'],
+      discountZone: 'obchodní slevová zóna',
+      free7: 'Služba bezplatné výměny a vrácení peněz do sedmi dnů',
+      deliver: 'Doručení zdarma',
+      paying: 'Platba na dobírku',
+      orders: 'objednávky',
+      thank: 'děkuji!',
+      request: 'Vaše žádost byla potvrzena',
+      receive: 'Brzy obdržíte potvrzovací e-mail s číslem vaší objednávky',
+      updateOrder: 'Aktualizovat objednávku',
+      information: 'Aktualizované informace o doručení a distribuci obdržíte e-mailem.',
+      customer: 'informace o zákazníkovi',
+      contactInfo: 'kontaktní informace',
+      delivery: 'adresa pro doručení',
+      payment: 'způsob platby',
+      payReceipt: 'Platba při příjmu',
+      invoice: 'Faktura',
+      keeyshop: 'Pokračovat v nákupu',
+      confirRequest: 'Potvrdit žádost',
+      recipientInfo: 'Informace o příjemci',
+      yourName: 'Celé jméno',
+      fullName: 'Celé jméno',
+      semail: 'E-mailem',
+      governor: 'Kraj',
+      telephone: 'Telefon',
+
+      district: 'Vyberte svůj okres',
+      city: 'Obec',
+      selectCity: 'Vyberte prosím své město',
+      zone: 'Region',
+      zonePle: 'Příklad: Olaya, Rijád',
+      building: 'Budova',
+      buildingPle: 'příklad: vila 2 patro 3',
+      street: 'Ulice',
+      streetPle: 'Příklad: King Fahd Street',
+      closest: 'Nejbližší orientační bod',
+      closestPle: 'Příklad: Kingdom Tower',
+      phonepl1: 'číslo mobilu: 5xxxxxxxx',
+      phonepl2: 'Číslo WhatsApp: 5xxxxxxxx',
+      comments: 'Zpráva',
+      apply: 'Dokončit nákup',
+      method: 'Platební metoda',
+      recieving: 'Platba při příjmu',
+      onlinePayment: 'Snížený transakční poplatek ve výši 30 riyalů za online platbu.',
+      Website: 'Doprava zdarma + Dobírka + Důvěryhodný web',
+      homepage: 'Snažíme se vám poskytovat vysoce kvalitní produkty a vynikající služby, obdržíte upozornění, když bude produkt doručen. Máte-li jakékoli dotazy, klikněte na "ikonu WhatsApp" na domovské stránce',
+      empty: 'pole nemohou být prázdná',
+      correct: 'Zadejte prosím správný formulář',
+      validnum: 'Zadejte platné telefonní číslo',
+      noOpinion: 'Žádný názor',
+      writeReview: 'Napsat recenzi',
+      address: 'Podrobná adresa',
+      postalCode: 'PSČ',
+      orderError: 'Nákup se nezdařil',
+      chooseMore: 'vyberte si ještě jednu',
+      noSelect: 'Vyberte prosím specifikace produktu',
+      policyList: ['certifikace EU', 'Platba na dobírku', 'Vrácení do 30 dnů', 'Doprava zdarma'],
+      divisionText: 'Podrobnosti',
+      quantityText: 'Množství',
+      errorQuantity: 'Zadejte prosím množství produktu',
+      addressList: [
+        {
+          "name": "Vyberte kraj",
+          "value": ""
+        },
+        {
+          "name": "Hlavní město Praha",
+          "value": "Hlavní město Praha"
+        },
+        {
+          "name": "Jihomoravský kraj",
+          "value": "Jihomoravský kraj"
+        },
+        {
+          "name": "Jihočeský kraj",
+          "value": "Jihočeský kraj"
+        },
+        {
+          "name": "Karlovarský kraj",
+          "value": "Karlovarský kraj"
+        },
+        {
+          "name": "Kraj Vysočina",
+          "value": "Kraj Vysočina"
+        },
+        {
+          "name": "Královéhradecký kraj",
+          "value": "Královéhradecký kraj"
+        },
+        {
+          "name": "Liberecký kraj",
+          "value": "Liberecký kraj"
+        },
+        {
+          "name": "Moravskoslezský kraj",
+          "value": "Moravskoslezský kraj"
+        },
+        {
+          "name": "Olomoucký kraj",
+          "value": "Olomoucký kraj"
+        },
+        {
+          "name": "Pardubický kraj",
+          "value": "Pardubický kraj"
+        },
+        {
+          "name": "Plzeňský kraj",
+          "value": "Plzeňský kraj"
+        },
+        {
+          "name": "Středočeský kraj",
+          "value": "Středočeský kraj"
+        },
+        {
+          "name": "Zlínský kraj",
+          "value": "Zlínský kraj"
+        },
+        {
+          "name": "Ústecký kraj",
+          "value": "Ústecký kraj"
+        }
+      ]
+    },
+    // 波兰
+    zł: {
+      type: "zł",
+      country: "Polska",
+      country_code: 'PL',
+      deliveryProcess: 'deliveryProcess6.png',
+      whatsAppText: "Proszę kliknąć bezpośrednio przycisk wysyłania, nie usuwać poniższego linku, najdokładniejsze odpowiedzi otrzymasz od naszego działu obsługi klienta",
+      notFoundTit: 'Ta strona została utracona',
+      notFoundText: 'Strona, której szukasz, nie została znaleziona.',
+      buy: "Zapłać Przy Odbiorze",
+      comTit: 'Opinie klientów',
+      write: 'usuń ocenę',
+      sold: 'obecnie brak na stanie',
+      addComment: "Napisz komentarz",
+      rating: 'ocena oceny',
+      reviewTitle: 'Tytuł recenzji',
+      reviewTiPle: "Wpisz tytuł swojej recenzji",
+      review: 'recenzja',
+      reviewPle: "Wpisz tutaj swoją recenzję",
+      error: 'To pole jest wymagane.',
+      picture: "zdjęcie/wideo (opcjonalnie)",
+      selectName: 'Nazwa (zwykle)',
+      namePle: '(wpisz nazwę (publiczną)',
+      emailN: 'e-mail',
+      emailPle: "Wpisz swój adres e-mail (prywatny)",
+      cancelRe: 'Anuluj ocenę',
+      submitRe: 'Prześlij recenzję',
+      screenCreate: 'najpierw najnowsze',
+      screenDesc: 'Najwyżej oceniane',
+      screenAsc: 'najniżej oceniany',
+      screenWith: 'Tylko obrazy',
+      screenPic: 'Najpierw zdjęcia',
+      screenVideo: 'Najpierw filmy',
+      screenMost: 'Najbardziej przydatny',
+      subReview: 'Recenzja wysłana',
+      subComtent: 'Dziękuję! Aby zobaczyć swoją recenzję, odśwież stronę za kilka chwil.',
+
+      commentResult: "Nie ma jeszcze żadnych recenzji",
+      based1: 'w oparciu o',
+      based2: 'oceny',
+      seeAll: 'zobacz wszystkie recenzje',
+      image5: 'Przepraszamy, do sprawdzenia możemy zaakceptować tylko 5 zdjęć.',
+      rightEmail: "Proszę podać poprawny adres e-mail",
+      unknown: 'nieznany',
+      acticleList: ['Metody płatności', 'Dostawa', 'O nas', 'Warunki', 'Zwroty i wymiany', 'Polityka prywatności', 'Skontaktuj się z nami'],
+      discountZone: 'strefa rabatów biznesowych',
+      free7: 'Bezpłatna wymiana i zwrot pieniędzy w ciągu siedmiu dni',
+      deliver: 'Dostawa gratis',
+      paying: 'Płatność gotówką przy odbiorze',
+      orders: "zamówienia",
+      thank: 'dziękuję!',
+      request: 'Twoja prośba została potwierdzona',
+      receive: 'Wkrótce otrzymasz e-mail z potwierdzeniem zawierającym numer zamówienia',
+      updateOrder: 'Aktualizuj zamówienie',
+      information: "Otrzymasz aktualne informacje o wysyłce i dystrybucji e-mailem.",
+      customer: 'informacje o kliencie',
+      contactInfo: 'dane kontaktowe',
+      delivery: "adres dostawy",
+      payment: 'Metoda płatności',
+      payReceipt: "Płatność przy odbiorze",
+      invoice: "Faktura",
+      keeyshop: 'Kontynuuj zakupy',
+      confirRequest: 'Potwierdź żądanie',
+      recipientInfo: 'Informacje o Odbiorcy',
+      yourName: 'Imię i nazwisko',
+      fullName: 'Imię i nazwisko',
+      semail: 'E-mail',
+      governor: "Województwo",
+      telephone: "Numer telefonu",
+
+      district: "Proszę wybrać swoją dzielnicę",
+      city: "Gmina",
+      selectCity: 'Proszę wybrać swoje miasto',
+      zone: 'Region',
+      zonePle: 'Przykład: Olaya, Riyad',
+      building: "Budynek",
+      buildingPle: 'przykład: willa 2 piętro 3',
+      street: 'ulica',
+      streetPle: 'Przykład: King Fahd Street',
+      closest: "Najbliższy punkt orientacyjny",
+      closestPle: 'Przykład: Wieża Królestwa',
+      phonepl1: 'numer telefonu komórkowego: 5xxxxxxx',
+      phonepl2: "Numer WhatsApp: 5xxxxxxxx",
+      comments: 'Wiadomość',
+      apply: 'DOKOŃCZ ZAMÓWIENIE',
+      method: 'Metoda płatności',
+      recieving: 'Płatność przy odbiorze',
+      onlinePayment: "30 riali obniżonej opłaty transakcyjnej za płatność online.",
+      Website: 'Darmowa wysyłka + płatność przy odbiorze + zaufana strona internetowa',
+      homepage: 'Staramy się zapewnić Państwu produkty wysokiej jakości i doskonałą obsługę, zostaniecie Państwo powiadomieni o wysyłce produktu. Jeśli masz jakieś pytania, kliknij ikonę Whatsapp na stronie głównej',
+      empty: "pola nie mogą być puste",
+      correct: "Proszę wprowadzić poprawny formularz",
+      validnum: 'Wprowadź prawidłowy numer telefonu',
+      noOpinion: "Nie mam zdania",
+      writeReview: 'Napisz recenzję',
+      address: "Adres wysyłki",
+      addressPle: "Dokładna ulica, numer domu, numer pokoju",
+      postalCode: 'Kod pocztowy',
+      orderError: 'Nieudany zakup',
+      chooseMore: 'wybierz jeszcze jeden',
+      noSelect: 'Proszę wybrać specyfikację produktu',
+      policyList: ['Certyfikat UE', 'Płatność przy odbiorze', 'Zwrot w ciągu 30 dni', 'Darmowa dostawa'],
+      divisionText: 'Detale',
+      quantityText: 'Kwota',
+      errorQuantity: 'Proszę podać ilość produktu',
+    },
   }
   return language[LType];
 }

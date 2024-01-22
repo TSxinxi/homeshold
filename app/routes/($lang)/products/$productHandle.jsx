@@ -165,7 +165,8 @@ function GetJudge(product_id, page, sortBy, rating) {
                 })
               }
               if (commentTime && commentTime.getAttribute("data-content")) {
-                commentTime.innerHTML = new Date(commentTime.getAttribute("data-content")).toLocaleDateString()
+                // commentTime.innerHTML = new Date(commentTime.getAttribute("data-content")).toLocaleDateString()
+                commentTime.innerHTML = commentTime.getAttribute("data-content").slice(0, 10)
               }
               if (commentIcon) {
                 let img = '<img src="https://platform.antdiy.vip/static/image/userIcon.svg" alt="" />'
@@ -210,6 +211,7 @@ function GetCommentHeader() {
 
           if (averageWrapper) {
             averageWrapper.innerHTML = `<button class='add_comment'>${LText.addComment}</button>`
+            averageWrapper.style.display = 'none'
           }
           if (averageText) {
             if (averageText.innerHTML === 'Be the first to write a review') {
@@ -251,6 +253,8 @@ function GetCommentHeader() {
           return urlDivHead.innerHTML
         }
       }
+    }).catch(function (error) {
+    }).finally(() => {
     }))
 }
 // 筛选下拉框
@@ -448,6 +452,9 @@ export default function Product() {
   const { shippingPolicy, refundPolicy } = shop;
   const firstVariant = product.variants.nodes[0];
   const selectedVariant = product.selectedVariant ?? firstVariant;
+  const isOnSale =
+    selectedVariant?.price?.amount &&
+    selectedVariant?.compareAtPrice?.amount;
   const isOutOfStock = !selectedVariant?.availableForSale;
   const strProductId = product.id.lastIndexOf("/");
   let product_id = strProductId ? product.id.slice(strProductId + 1) : '';
@@ -468,6 +475,7 @@ export default function Product() {
   const [reviewer_name_format, setFrmat] = useState('');
   const [sortBy, setSortBy] = useState('created_at');
   const [filtRat, setFiltRat] = useState('');
+  const [currency, setCurrency] = useState('');
 
   useEffect(() => {
     setHasMounted(true);
@@ -476,11 +484,18 @@ export default function Product() {
       if (href && href.indexOf('-huf') > -1) {
         currencyCode = 'HUF'
         localStorage.setItem('currencyCode', currencyCode)
-      } else if (href && href.indexOf('-ron') > -1) {
-        currencyCode = 'RON'
+        setCurrency(currencyCode)
+      } else if (href && href.indexOf('-czk') > -1) {
+        currencyCode = 'CZK'
         localStorage.setItem('currencyCode', currencyCode)
+        setCurrency(currencyCode)
+      } else if (href && href.indexOf('-pln') > -1) {
+        currencyCode = 'zł'
+        localStorage.setItem('currencyCode', currencyCode)
+        setCurrency(currencyCode)
       } else {
         localStorage.removeItem('currencyCode')
+        setCurrency(selectedVariant?.price?.currencyCode)
       }
       let result = new URLSearchParams(window.location.search);
       let param = result.get('source');
@@ -524,7 +539,7 @@ export default function Product() {
             className="w-screen md:w-full lg:col-span-2"
           />
           <div className="left_product sticky md:-mb-nav md:top-nav md:-translate-y-nav md:pt-nav hiddenScroll padding16">
-            <section className="flex flex-col w-full gap-8 md:mx-auto md:max-w-sm md:px-0" style={{ color: '#141414E6' }}>
+            <section className="flex flex-col w-full md:mx-auto md:max-w-sm md:px-0" style={{ color: '#141414E6' }}>
               <div className="grid gap-2">
                 <Heading as="h1" className="whitespace-normal">
                   {title}
@@ -567,7 +582,7 @@ export default function Product() {
             </section>
           </div>
         </div>
-        <div className='padding16'>
+        <div className='comment_product'>
           <div className='comment_box'>
             <div className='comment_box_title'>{LText.comTit}</div>
             {commentHeader ? <div
@@ -575,13 +590,14 @@ export default function Product() {
               dangerouslySetInnerHTML={{ __html: commentHeader }}
               onClick={(e) => { clickComment(e, setFiltRat, product_id, sortBy, setComment) }}
             /> : <div className="jdgm-rev-widg__header comment_box_content">
-              <div className="jdgm-rev-widg__summary">
-                <div className="jdgm-rev-widg__summary-text">{LText.noOpinion}</div>
+              {/* <div className="jdgm-rev-widg__summary">
+                  <div className="jdgm-rev-widg__summary-text">{LText.noOpinion}</div>
+                </div> */}
+              <div className="jdgm-rev-widg__sort-wrapper" onClick={(e) => { clickComment(e, setFiltRat, product_id, sortBy, setComment) }}>
+                <button className="add_comment">{LText.writeReview}</button>
               </div>
-              <div className="jdgm-rev-widg__sort-wrapper">
-                <button className="add_comment" onClick={(e) => { clickComment(e, setFiltRat, product_id, sortBy, setComment) }}>{LText.writeReview}</button>
-              </div>
-            </div>}
+            </div>
+            }
             <div className='jq_slow'>
               <div className='write_review'>
                 <div className='write_review_title'>{LText.addComment}</div>
@@ -706,21 +722,47 @@ export default function Product() {
           )}
         </div>
         {selectedVariant && (
-          <div className="grid items-stretch gap-4 sticky_bottom">
-            <button className={`inline-block rounded font-medium text-center w-full ${isOutOfStock ? 'border border-primary/10 bg-contrast text-primary' : 'bg-primary text-contrast'}`}>
-              {isOutOfStock ? (
-                <Text className='py-3 px-6'>{LText.sold}</Text>//卖完了
-              ) : (
-                <Text //立即购买
-                  as="span"
-                  className="flex items-center justify-center gap-2 py-3 px-6"
-                  style={{ maxWidth: 'initial' }}
-                  onClick={() => { goSettleAccounts() }}
-                >
-                  <span>{LText.buy}</span>
-                </Text>
-              )}
-            </button>
+          // <div className="grid items-stretch gap-4 sticky_bottom">
+          //   <button className={`inline-block rounded font-medium text-center w-full ${isOutOfStock ? 'border border-primary/10 bg-contrast text-primary' : 'bg-primary text-contrast'}`}>
+          //     {isOutOfStock ? (
+          //       <Text className='py-3 px-6'>{LText.sold}</Text>//卖完了
+          //     ) : (
+          //       <Text //立即购买
+          //         as="span"
+          //         className="flex items-center justify-center gap-2 py-3 px-6"
+          //         style={{ maxWidth: 'initial' }}
+          //         onClick={() => { goSettleAccounts() }}
+          //       >
+          //         <span>{LText.buy}</span>
+          //       </Text>
+          //     )}
+          //   </button>
+          // </div>
+          <div className='settle_accounts_foot'>
+            <div>
+              <div className='buy_btn_price'>
+                <span className='btn_price btn_price_new'>
+                  <i>{currency} </i>{parseFloat(selectedVariant?.price?.amount)}
+                </span>
+                {isOnSale && (
+                  <span className='btn_price btn_price_old'>
+                    <i>{currency} </i>{parseFloat(selectedVariant?.compareAtPrice?.amount)}
+                  </span>
+                )}
+              </div>
+              <div className='submit_btn'>
+                <button className='inline-block rounded font-medium text-center w-full bg-primary text-contrast paddingT5'>
+                  <Text //立即购买
+                    as="span"
+                    className="flex items-center justify-center gap-2 py-3 px-6 buy_text"
+                    style={{ maxWidth: 'initial' }}
+                    onClick={() => { goSettleAccounts() }}
+                  >
+                    <span>{LText.buy}</span>
+                  </Text>
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </Section>
@@ -729,13 +771,16 @@ export default function Product() {
 }
 
 function goSettleAccounts() {
-  const firstVariant = productData.variants.nodes[0];
-  const selectedVariant = productData.selectedVariant ?? firstVariant;
-  if (currencyCode) {
-    selectedVariant.price.currencyCode = currencyCode
-  }
-  localStorage.removeItem('selectedVariant')
-  localStorage.setItem('selectedVariant', JSON.stringify(selectedVariant))
+  // const firstVariant = productData.variants.nodes[0];
+  // const selectedVariant = productData.selectedVariant ?? firstVariant;
+  // if (currencyCode) {
+  //   selectedVariant.price.currencyCode = currencyCode
+  // }
+  // localStorage.removeItem('selectedVariant')
+  // localStorage.setItem('selectedVariant', JSON.stringify(selectedVariant))
+  localStorage.removeItem('productVariant')
+  localStorage.setItem('productVariant', JSON.stringify(productData))
+  sendFbq('AddToCart')
 
   let source_name = window.localStorage.getItem('sourceName')
   if (source_name) {
@@ -748,6 +793,13 @@ function goSettleAccounts() {
     })
   } else {
     window.open(`/settleAccounts?id=${productData.id}`, '_self')
+  }
+}
+
+// FBQ
+function sendFbq(a, b, c) {
+  if ("function" == typeof window.fbq) {
+    window.fbq("track", a, b, c)
   }
 }
 
@@ -798,8 +850,7 @@ export function ProductForm() {
 
   const isOnSale =
     selectedVariant?.price?.amount &&
-    selectedVariant?.compareAtPrice?.amount &&
-    selectedVariant?.price?.amount < selectedVariant?.compareAtPrice?.amount;
+    selectedVariant?.compareAtPrice?.amount;
 
   const productAnalytics = {
     ...analytics.products[0],
@@ -815,11 +866,11 @@ export function ProductForm() {
   }, []);
 
   return (
-    <div className="grid gap-10">
+    <div className="grid pricex_box">
       <div className="grid gap-4">
         <Text
           as="span"
-          className="flex items-center gap-2"
+          className="flex items-baseline"
         >
           {/* <Money
             withoutTrailingZeros
@@ -842,11 +893,11 @@ export function ProductForm() {
             </span>
           )}
         </Text>
-        <img className="variant_img" src={selectedVariant?.image?.url} />
-        <ProductOptions
+        {/* <img className="variant_img" src={selectedVariant?.image?.url} /> */}
+        {/* <ProductOptions
           options={product.options}
           searchParamsWithDefaults={searchParamsWithDefaults}
-        />
+        /> */}
         {/* {selectedVariant && (
           <div className="grid items-stretch gap-4">
             <button className={`inline-block rounded font-medium text-center w-full ${isOutOfStock ? 'border border-primary/10 bg-contrast text-primary' : 'bg-primary text-contrast'}`}>
@@ -894,6 +945,19 @@ export function ProductForm() {
           </div>
         )} */}
       </div>
+      <div className='service'>
+        {
+          LText.policyList && LText.policyList.length > 0 ? LText.policyList.map((item, index) => {
+            return <div className='service_li' key={index}>
+              <img className='service_icon' src="https://platform.antdiy.vip/static/image/cod_success.svg" alt="" />
+              {
+                index === 0 ? <span>{item}<img src="https://platform.antdiy.vip/static/image/CErenzheng.svg" alt="" /></span> : <span>{item}</span>
+              }
+            </div>
+          }) : null
+        }
+      </div>
+      <div className='division_box'>{LText.divisionText}</div>
     </div>
   );
 }
